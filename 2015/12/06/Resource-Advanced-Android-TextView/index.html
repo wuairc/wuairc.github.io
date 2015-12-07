@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="hexo," />
+  <meta name="keywords" content="TextView, Style," />
 
 
 
@@ -51,22 +51,28 @@
 
 
 
-<meta name="description" content="Install nvm (Node Version Manager)1curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
-If that fail, try manual install:
-1git clone https://github.com/creationix/nvm.gi">
+<meta name="description" content="Talk given by Chiu-Ki Chan on AnDevCon 2015.
+Video: Advanced Android TextViewSlide: http://bit.ly/advtextSource code: https://github.com/chiuki/advanced-textview
+Main points:
+
+Animated CompoundDrawabl">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Install Hexo on Ubuntu">
-<meta property="og:url" content="http://yang.run/2015/11/27/install-hexo-on-ubuntu/index.html">
+<meta property="og:title" content="Resource: Advanced Android TextView">
+<meta property="og:url" content="http://yang.run/2015/12/06/Resource-Advanced-Android-TextView/index.html">
 <meta property="og:site_name" content="Tim Yang's blog">
-<meta property="og:description" content="Install nvm (Node Version Manager)1curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
-If that fail, try manual install:
-1git clone https://github.com/creationix/nvm.gi">
-<meta property="og:updated_time" content="2015-11-27T14:27:03.811Z">
+<meta property="og:description" content="Talk given by Chiu-Ki Chan on AnDevCon 2015.
+Video: Advanced Android TextViewSlide: http://bit.ly/advtextSource code: https://github.com/chiuki/advanced-textview
+Main points:
+
+Animated CompoundDrawabl">
+<meta property="og:updated_time" content="2015-12-07T16:42:30.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Install Hexo on Ubuntu">
-<meta name="twitter:description" content="Install nvm (Node Version Manager)1curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
-If that fail, try manual install:
-1git clone https://github.com/creationix/nvm.gi">
+<meta name="twitter:title" content="Resource: Advanced Android TextView">
+<meta name="twitter:description" content="Talk given by Chiu-Ki Chan on AnDevCon 2015.
+Video: Advanced Android TextViewSlide: http://bit.ly/advtextSource code: https://github.com/chiuki/advanced-textview
+Main points:
+
+Animated CompoundDrawabl">
 
 
 
@@ -78,7 +84,7 @@ If that fail, try manual install:
   };
 </script>
 
-  <title> Install Hexo on Ubuntu | Tim Yang's blog </title>
+  <title> Resource: Advanced Android TextView | Tim Yang's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -198,7 +204,7 @@ If that fail, try manual install:
             
             
               
-                Install Hexo on Ubuntu
+                Resource: Advanced Android TextView
               
             
           </h1>
@@ -207,11 +213,26 @@ If that fail, try manual install:
         <div class="post-meta">
           <span class="post-time">
             Posted on
-            <time itemprop="dateCreated" datetime="2015-11-27T22:20:45+08:00" content="2015-11-27">
-              2015-11-27
+            <time itemprop="dateCreated" datetime="2015-12-06T23:59:54+08:00" content="2015-12-06">
+              2015-12-06
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; In
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
@@ -231,17 +252,24 @@ If that fail, try manual install:
       
 
       
-        <span itemprop="articleBody"><h2 id="Install_nvm_(Node_Version_Manager)">Install <a href="https://github.com/creationix/nvm" target="_blank" rel="external">nvm (Node Version Manager)</a></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.<span class="number">29.0</span>/install.sh | bash</span><br></pre></td></tr></table></figure>
-<p>If that fail, try manual install:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/creationix/nvm.git ~/.nvm &amp;&amp; <span class="built_in">cd</span> ~/.nvm &amp;&amp; git checkout `git describe --abbrev=<span class="number">0</span> --tags`</span><br></pre></td></tr></table></figure>
-<p>Then add these lines to <code>~/.bashrc</code>, <code>~/profile</code>, or <code>~/.zshrc</code>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> NVM_DIR=<span class="string">"<span class="variable">$HOME</span>/.nvm"</span></span><br><span class="line">[ <span class="operator">-s</span> <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> ] &amp;&amp; . <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> <span class="comment"># This loads nvm</span></span><br></pre></td></tr></table></figure>
-<p>At last, reopen your terminal or logout and login again.</p>
-<h2 id="Install_Node_and_npm">Install Node and npm</h2><p>nvm bundles node with npm (node package manager), so you only need to install node.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">nvm install node  <span class="comment"># this install the latest version of node</span></span><br><span class="line"></span><br><span class="line">nvm use node <span class="comment"># use the latest vesion of node</span></span><br><span class="line"></span><br><span class="line">nvm <span class="built_in">alias</span> default node  <span class="comment"># set a default node version to be used on any new shell</span></span><br><span class="line"></span><br><span class="line">nvm ls  <span class="comment"># list installed node vesions</span></span><br><span class="line"></span><br><span class="line">nvm ls-remote <span class="comment"># list what vesions are available to install</span></span><br></pre></td></tr></table></figure>
-<h2 id="Install_hexo_and_init_a_blog">Install <a href="https://hexo.io/" target="_blank" rel="external">hexo</a> and init a blog</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<hr>
-<p>done.</p>
+        <span itemprop="articleBody"><p>Talk given by Chiu-Ki Chan on AnDevCon 2015.</p>
+<p>Video: <a href="https://www.youtube.com/watch?v=q2GtM1_RmMw" target="_blank" rel="external">Advanced Android TextView</a><br>Slide: <a href="http://bit.ly/advtext" target="_blank" rel="external">http://bit.ly/advtext</a><br>Source code: <a href="https://github.com/chiuki/advanced-textview" target="_blank" rel="external">https://github.com/chiuki/advanced-textview</a></p>
+<p>Main points:</p>
+<ul>
+<li>Animated CompoundDrawable</li>
+<li>Text shadow</li>
+<li>Custom font</li>
+<li>Gradient text</li>
+<li>Patterned text</li>
+<li>HTML.fromHtml()</li>
+<li>setFontFeatureSettings()</li>
+<li>Styled string</li>
+<li>AlignmentSpan</li>
+<li>ClickableSpan</li>
+<li>Rainbow span, animated</li>
+<li>Lined paper</li>
+<li>Emoji</li>
+</ul>
 </span>
       
     </div>
@@ -250,7 +278,7 @@ If that fail, try manual install:
       
         <div class="post-tags">
           
-            <a href="/tags/hexo/" rel="tag">#hexo</a>
+            <a href="/tags/TextView-Style/" rel="tag">#TextView, Style</a>
           
         </div>
       
@@ -259,16 +287,16 @@ If that fail, try manual install:
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/11/25/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2015/12/06/whatis_which_whence_where_whereis_type_apropos/" rel="next" title="whatis, which, whence, where, whereis, type, apropos">
+                <i class="fa fa-chevron-left"></i> whatis, which, whence, where, whereis, type, apropos
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/12/06/whatis_which_whence_where_whereis_type_apropos/" rel="prev" title="whatis, which, whence, where, whereis, type, apropos">
-                whatis, which, whence, where, whereis, type, apropos <i class="fa fa-chevron-right"></i>
+              <a href="/2015/12/08/Resource-Droidcon-NYC-2015-Using-Styles-and-Themes-Without-Going-Crazy/" rel="prev" title="Resource: Droidcon NYC 2015 - Using Styles and Themes Without Going Crazy">
+                Resource: Droidcon NYC 2015 - Using Styles and Themes Without Going Crazy <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -383,7 +411,7 @@ If that fail, try manual install:
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Install_nvm_(Node_Version_Manager)"><span class="nav-number">1.</span> <span class="nav-text">Install nvm (Node Version Manager)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Install_Node_and_npm"><span class="nav-number">2.</span> <span class="nav-text">Install Node and npm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Install_hexo_and_init_a_blog"><span class="nav-number">3.</span> <span class="nav-text">Install hexo and init a blog</span></a></li></ol></div>
+              <p class="post-toc-empty">This post does not have a Table Of Contents</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
