@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android, Java, Blog" />
+  <meta name="keywords" content="JNI,NDK," />
 
 
 
@@ -51,15 +51,25 @@
 
 
 
-<meta name="description" content="Android developer">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Tim Yang's blog">
-<meta property="og:url" content="http://yang.run/index.html">
+<meta name="description" content="copied from JNI Tips .
+see also Getting Started with the NDK.
+
+ Java Native Interface Specification (Java 7)JavaVM and JNIEnvBoth of these are essentially pointers to pointers to function tables. (In">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNI Tips annotated">
+<meta property="og:url" content="http://yang.run/2015/12/12/JNI-tips-annotated/index.html">
 <meta property="og:site_name" content="Tim Yang's blog">
-<meta property="og:description" content="Android developer">
+<meta property="og:description" content="copied from JNI Tips .
+see also Getting Started with the NDK.
+
+ Java Native Interface Specification (Java 7)JavaVM and JNIEnvBoth of these are essentially pointers to pointers to function tables. (In">
+<meta property="og:updated_time" content="2015-12-12T14:30:24.013Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Tim Yang's blog">
-<meta name="twitter:description" content="Android developer">
+<meta name="twitter:title" content="JNI Tips annotated">
+<meta name="twitter:description" content="copied from JNI Tips .
+see also Getting Started with the NDK.
+
+ Java Native Interface Specification (Java 7)JavaVM and JNIEnvBoth of these are essentially pointers to pointers to function tables. (In">
 
 
 
@@ -71,7 +81,7 @@
   };
 </script>
 
-  <title> Tim Yang's blog </title>
+  <title> JNI Tips annotated | Tim Yang's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -92,9 +102,7 @@
 
 
 
-  <div class="container one-column 
-   page-home 
-">
+  <div class="container one-column page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -171,15 +179,9 @@
       <div class="main-inner">
         <div id="content" class="content">
           
-  <section id="posts" class="posts-expand">
 
+  <div id="posts" class="posts-expand">
     
-
-    
-    
-
-    
-      
 
   
   
@@ -199,10 +201,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2015/12/12/JNI-tips-annotated/" itemprop="url">
-                  JNI Tips annotated
-                </a>
+                JNI Tips annotated
               
             
           </h1>
@@ -250,10 +249,7 @@
       
 
       
-        
-          <span itemprop="articleBody">
-            
-              <p>copied from <a href="http://developer.android.com/training/articles/perf-jni.html" target="_blank" rel="external">JNI Tips</a> .</p>
+        <span itemprop="articleBody"><p>copied from <a href="http://developer.android.com/training/articles/perf-jni.html" target="_blank" rel="external">JNI Tips</a> .</p>
 <p>see also <a href="http://developer.android.com/ndk/guides/index.html" target="_blank" rel="external">Getting Started with the NDK</a>.</p>
 <hr>
 <h2 id="Java_Native_Interface_Specification_(Java_7)"><a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/jniTOC.html" target="_blank" rel="external"> Java Native Interface Specification (Java 7)</a></h2><h2 id="JavaVM_and_JNIEnv">JavaVM and JNIEnv</h2><p>Both of these are essentially pointers to pointers to function tables. (In the C++ version, they’re classes with a pointer to a function table and a member function for each JNI function that indirects through the table.)</p>
@@ -377,569 +373,48 @@ GetStringUTFRegion
 <li><code>DefineClass</code> is not implemented.</li>
 </ol>
 <p>Before Android 4.0, Android 2.2, Android 2.0 respectively, there are some restrictions, see <a href="http://developer.android.com/training/articles/perf-jni.html#unsupported" target="_blank" rel="external">original text</a> for detail.</p>
-
-            
-          </span>
-        
+</span>
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/12/08/Resource-Droidcon-NYC-2015-Using-Styles-and-Themes-Without-Going-Crazy/" itemprop="url">
-                  Resource: Droidcon NYC 2015 - Using Styles and Themes Without Going Crazy
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            Posted on
-            <time itemprop="dateCreated" datetime="2015-12-08T00:17:45+08:00" content="2015-12-08">
-              2015-12-08
-            </time>
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category" >
-              &nbsp; | &nbsp; In
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
+            <a href="/tags/JNI/" rel="tag">#JNI</a>
           
-
+            <a href="/tags/NDK/" rel="tag">#NDK</a>
           
-            
-          
-
-          
-
         </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
       
 
       
-        
-          <span itemprop="articleBody">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <p>video: <a href="https://www.youtube.com/watch?v=Jr8hJdVGHAk" target="_blank" rel="external">https://www.youtube.com/watch?v=Jr8hJdVGHAk</a><br>slide: <a href="https://speakerdeck.com/dlew/using-styles-and-themes-without-going-crazy-1" target="_blank" rel="external">https://speakerdeck.com/dlew/using-styles-and-themes-without-going-crazy-1</a></p>
-<p>Main points:</p>
-<ol>
-<li>When to style</li>
-<li>When NOT to style</li>
-<li>Parenting</li>
-<li>TextAppearance</li>
-<li>Themes vs. Styles</li>
-<li>Applying to View</li>
-<li>Use AppCompat</li>
-<li>Window Attributes</li>
-<li>Color Attributes</li>
-<li>Default Styles</li>
-<li>Resource Attributes</li>
-<li>Namespacing</li>
-<li><strong>Finding Attributes</strong></li>
-<li>Attributes in XML</li>
-<li>Debug Color Theme</li>
-<li>Dump Theme ( HierarchyViewer)</li>
-<li>Custom Attributes</li>
-<li>Dynamic Styles</li>
-<li>Dynamic Theming</li>
-</ol>
-<h2 id="Themes_vs-_Styles">Themes vs. Styles</h2><ul>
-<li>Same thing!</li>
-<li>Different scope</li>
-<li>Different attributes</li>
-</ul>
-
+              <a href="/2015/12/08/Resource-Droidcon-NYC-2015-Using-Styles-and-Themes-Without-Going-Crazy/" rel="next" title="Resource: Droidcon NYC 2015 - Using Styles and Themes Without Going Crazy">
+                <i class="fa fa-chevron-left"></i> Resource: Droidcon NYC 2015 - Using Styles and Themes Without Going Crazy
+              </a>
             
-          </span>
-        
-      
-    </div>
+          </div>
 
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+          <div class="post-nav-prev post-nav-item">
             
-            
-              
-                
-                <a class="post-title-link" href="/2015/12/06/Resource-Advanced-Android-TextView/" itemprop="url">
-                  Resource: Advanced Android TextView
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            Posted on
-            <time itemprop="dateCreated" datetime="2015-12-06T23:59:54+08:00" content="2015-12-06">
-              2015-12-06
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; In
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
       
 
       
-        
-          <span itemprop="articleBody">
-            
-              <p>Talk given by Chiu-Ki Chan on AnDevCon 2015.</p>
-<p>Video: <a href="https://www.youtube.com/watch?v=q2GtM1_RmMw" target="_blank" rel="external">Advanced Android TextView</a><br>Slide: <a href="http://bit.ly/advtext" target="_blank" rel="external">http://bit.ly/advtext</a><br>Source code: <a href="https://github.com/chiuki/advanced-textview" target="_blank" rel="external">https://github.com/chiuki/advanced-textview</a></p>
-<p>Main points:</p>
-<ul>
-<li>Animated CompoundDrawable</li>
-<li>Text shadow</li>
-<li>Custom font</li>
-<li>Gradient text</li>
-<li>Patterned text</li>
-<li>HTML.fromHtml()</li>
-<li>setFontFeatureSettings()</li>
-<li>Styled string</li>
-<li>AlignmentSpan</li>
-<li>ClickableSpan</li>
-<li>Rainbow span, animated</li>
-<li>Lined paper</li>
-<li>Emoji</li>
-</ul>
-
-            
-          </span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-      
 
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/12/06/whatis_which_whence_where_whereis_type_apropos/" itemprop="url">
-                  whatis, which, whence, where, whereis, type, apropos
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            Posted on
-            <time itemprop="dateCreated" datetime="2015-12-06T15:36:44+08:00" content="2015-12-06">
-              2015-12-06
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-              <p>command lines in this article assumes <code>zsh</code>.</p>
-<h2 id="whatis(1)">whatis(1)</h2><p>whatis - display one-line manual page descriptions. useful options:</p>
-<ul>
-<li><code>-r</code> <code>--regex</code>: interpret each keyword as a regex</li>
-<li><code>-w</code> <code>--wildcard</code>: keyword(s) contain wildcards</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ whatis gcc</span><br><span class="line">gcc (<span class="number">1</span>)              - GNU project C and C++ compiler</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">where</span> whatis</span><br><span class="line">/usr/bin/whatis</span><br><span class="line"></span><br><span class="line">$ whatis -r <span class="string">'^wh'</span></span><br><span class="line">whatis (<span class="number">1</span>)           - display one-line manual page descriptions</span><br><span class="line">whereis (<span class="number">1</span>)          - locate the binary, <span class="built_in">source</span>, and manual page files <span class="keyword">for</span> a...</span><br><span class="line"><span class="built_in">which</span> (<span class="number">1</span>)            - locate a <span class="built_in">command</span></span><br><span class="line">whiptail (<span class="number">1</span>)         - display dialog boxes from shell scripts</span><br><span class="line">WhitePixel (<span class="number">3</span>)       - Display macros and <span class="built_in">functions</span></span><br><span class="line">WhitePixelOfScreen (<span class="number">3</span>) - screen information <span class="built_in">functions</span> and macros</span><br><span class="line">who (<span class="number">1</span>)              - show who is logged on</span><br><span class="line">whoami (<span class="number">1</span>)           - <span class="built_in">print</span> effective userid</span><br><span class="line">whois (<span class="number">1</span>)            - client <span class="keyword">for</span> the whois directory service</span><br><span class="line">whois.conf (<span class="number">5</span>)       - alternative WHOIS servers list <span class="keyword">for</span> whois client</span><br></pre></td></tr></table></figure>
-<h2 id="which(1)">which(1)</h2><p>In <code>zsh</code>, this is a shell <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">built-in command</a>:, equivalent to <code>whence -c</code>. In <code>bash</code>, this is <code>/usr/bin/which</code>.<br>Useful options (for <code>/usr/bin/which</code>):</p>
-<ul>
-<li><code>-a</code>: print all matching pathnames of each argument</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ whatis <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span> (<span class="number">1</span>)            - locate a <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">where</span> <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span>: shell built-in <span class="built_in">command</span></span><br><span class="line">/usr/bin/<span class="built_in">which</span></span><br><span class="line">/bin/<span class="built_in">which</span></span><br></pre></td></tr></table></figure>
-<h2 id="whence">whence</h2><p>whence is a <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">zsh built-in command</a>. Useful options:</p>
-<ul>
-<li><code>-w</code>: For each name, print ‘name: word’ where word is one of <strong>alias</strong>, <strong>builtin</strong>, <strong>command</strong>, <strong>function</strong>, <strong>hashed</strong>, <strong>reserved</strong> or <strong>none</strong></li>
-<li><code>-f</code>: Causes the contents of a shell function to be displayed</li>
-<li><code>-p</code>: Do a path search for name even if it is an alias, reserved word, shell function or builtin.</li>
-<li><code>-a</code>: Do a search for all occurrences of <em>name</em> throughout the command path.</li>
-<li><code>-m</code>: The arguments are taken as patterns (should be quoted)</li>
-<li><code>-c</code>: Print the results in a csh-like format. e.g. <code>which</code> in zsh.</li>
-</ul>
-<h2 id="where">where</h2><p>where is a <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">zsh built-in command</a>, equivalent to <code>whence -ca</code>.</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">where</span> grep</span><br><span class="line">grep: aliased to grep  --color=auto --exclude-dir=&#123;.bzr,CVS,.git,.hg,.svn&#125;</span><br><span class="line">/bin/grep</span><br></pre></td></tr></table></figure>
-<h2 id="whereis(1)">whereis(1)</h2><p>whereis - locate the binary, source, and manual page files for a command.</p>
-<p><strong>Note</strong>: the supplied names are first stripped of leading pathname components and any (single) trailing extension.</p>
-<p>Useful options:</p>
-<ul>
-<li><code>-b</code>: Search only for binaries</li>
-<li><code>-m</code>: Search only for manual sections</li>
-<li><code>-s</code>: Search only for sources</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ whereis stdio</span><br><span class="line">$ <span class="comment"># or </span></span><br><span class="line">$ whereis stdio.h</span><br><span class="line">$ <span class="comment"># or</span></span><br><span class="line">$ whereis stdio.cpp</span><br><span class="line">$ <span class="comment"># or </span></span><br><span class="line">$ whereis stdio.any_extension</span><br><span class="line">$ <span class="comment"># or</span></span><br><span class="line">$ whereis /any/path/stdio.any_extension</span><br><span class="line">stdio: /usr/include/stdio.h /usr/share/man/man3/stdio.<span class="number">3</span>.gz</span><br></pre></td></tr></table></figure>
-<h2 id="type">type</h2><p>type is a <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">shell built-in command</a>, equivalent to <code>whence -v</code>.<br>Bash shell also has this command with equivalent functionality.</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">type</span> zsh</span><br><span class="line">zsh is /usr/bin/zsh</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">type</span> <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span> is a shell <span class="built_in">builtin</span></span><br></pre></td></tr></table></figure>
-<h2 id="apropos(1)">apropos(1)</h2><p>apropos - search the manual page names and descriptions.<br>Each manual page has a short description available within it.  apropos searches the descriptions for instances of keyword. Keywords are regex by default.</p>
-<p>Useful options:</p>
-<ul>
-<li><code>-r</code>, <code>--regex</code>: Interpret  each keyword as a regular expression.  This is the default behaviour</li>
-<li><code>-w</code>, <code>--wildcard</code>: Interpret each keyword as a pattern containing shell style wildcards</li>
-<li><code>-L locale</code>, <code>--locale=locale</code></li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ apropos <span class="string">'^std'</span>  </span><br><span class="line">$ <span class="comment"># search C++ standard library functions (need to install doc package first).</span></span><br></pre></td></tr></table></figure>
-
-            
-          </span>
-        
+    <div class="post-spread">
       
     </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/11/27/install-hexo-on-ubuntu/" itemprop="url">
-                  Install Hexo on Ubuntu
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            Posted on
-            <time itemprop="dateCreated" datetime="2015-11-27T22:20:45+08:00" content="2015-11-27">
-              2015-11-27
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-              <h2 id="Install_nvm_(Node_Version_Manager)">Install <a href="https://github.com/creationix/nvm" target="_blank" rel="external">nvm (Node Version Manager)</a></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.<span class="number">29.0</span>/install.sh | bash</span><br></pre></td></tr></table></figure>
-<p>If that fail, try manual install:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/creationix/nvm.git ~/.nvm &amp;&amp; <span class="built_in">cd</span> ~/.nvm &amp;&amp; git checkout `git describe --abbrev=<span class="number">0</span> --tags`</span><br></pre></td></tr></table></figure>
-<p>Then add these lines to <code>~/.bashrc</code>, <code>~/profile</code>, or <code>~/.zshrc</code>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> NVM_DIR=<span class="string">"<span class="variable">$HOME</span>/.nvm"</span></span><br><span class="line">[ <span class="operator">-s</span> <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> ] &amp;&amp; . <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> <span class="comment"># This loads nvm</span></span><br></pre></td></tr></table></figure>
-<p>At last, reopen your terminal or logout and login again.</p>
-<h2 id="Install_Node_and_npm">Install Node and npm</h2><p>nvm bundles node with npm (node package manager), so you only need to install node.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">nvm install node  <span class="comment"># this install the latest version of node</span></span><br><span class="line"></span><br><span class="line">nvm use node <span class="comment"># use the latest vesion of node</span></span><br><span class="line"></span><br><span class="line">nvm <span class="built_in">alias</span> default node  <span class="comment"># set a default node version to be used on any new shell</span></span><br><span class="line"></span><br><span class="line">nvm ls  <span class="comment"># list installed node vesions</span></span><br><span class="line"></span><br><span class="line">nvm ls-remote <span class="comment"># list what vesions are available to install</span></span><br></pre></td></tr></table></figure>
-<h2 id="Install_hexo_and_init_a_blog">Install <a href="https://hexo.io/" target="_blank" rel="external">hexo</a> and init a blog</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<hr>
-<p>done.</p>
-
-            
-          </span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/11/23/hello-world/" itemprop="url">
-                  Hello World
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            Posted on
-            <time itemprop="dateCreated" datetime="2015-11-23T09:39:36+08:00" content="2015-11-23">
-              2015-11-23
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-              <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-            
-          </span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-
-  </section>
-
-  
+  </div>
 
 
         </div>
@@ -948,6 +423,10 @@ GetStringUTFRegion
 
 
         
+  <div class="comments" id="comments">
+    
+  </div>
+
 
       </div>
 
@@ -968,8 +447,17 @@ GetStringUTFRegion
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table Of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" src="/images/my_avatar.png" alt="Tim Yang" itemprop="image"/>
           <p class="site-author-name" itemprop="name">Tim Yang</p>
@@ -1014,6 +502,23 @@ GetStringUTFRegion
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java_Native_Interface_Specification_(Java_7)"><span class="nav-number">1.</span> <span class="nav-text"> Java Native Interface Specification (Java 7)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaVM_and_JNIEnv"><span class="nav-number">2.</span> <span class="nav-text">JavaVM and JNIEnv</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Threads"><span class="nav-number">3.</span> <span class="nav-text">Threads</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jclass,_jmethodID,_and_jfieldID"><span class="nav-number">4.</span> <span class="nav-text">jclass, jmethodID, and jfieldID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Local_and_Global_References"><span class="nav-number">5.</span> <span class="nav-text">Local and Global References</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UTF-8_and_UTF-16_Strings"><span class="nav-number">6.</span> <span class="nav-text">UTF-8 and UTF-16 Strings</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Primitive_Arrays"><span class="nav-number">7.</span> <span class="nav-text">Primitive Arrays</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Region_Calls"><span class="nav-number">8.</span> <span class="nav-text">Region Calls</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exceptions"><span class="nav-number">9.</span> <span class="nav-text">Exceptions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Extended_Checking"><span class="nav-number">10.</span> <span class="nav-text">Extended Checking</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Native_Libraries"><span class="nav-number">11.</span> <span class="nav-text">Native Libraries</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#64-bit_Considerations"><span class="nav-number">12.</span> <span class="nav-text">64-bit Considerations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsupported_Features/Backwards_Compatibility"><span class="nav-number">13.</span> <span class="nav-text">Unsupported Features/Backwards Compatibility</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
       
 
     </div>
@@ -1084,6 +589,167 @@ GetStringUTFRegion
   <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
 
   
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
 
   <script type="text/javascript" src="/js/bootstrap.js"></script>
 
