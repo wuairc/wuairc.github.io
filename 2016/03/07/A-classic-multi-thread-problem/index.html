@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="NIO,内存映射," />
+  <meta name="keywords" content="multi-thread," />
 
 
 
@@ -51,19 +51,19 @@
 
 
 
-<meta name="description" content="问题遇到一个配置文件，里面有近10000个double类型的数字，每个数字1行，加载到内存里变成List&amp;lt;Double&amp;gt;，在小米3上加载时间需要200多ms。这种写法可读性好，但牺牲了速度和文件大小。而这个文件的使用场景则是越快起好，使用文本方式储存double数组就显得非常naive了。
-文件内容类似下面这样123456-0.07442092964745924 -0.28022360">
+<meta name="description" content="一天，同事抛给我一个线上崩溃。堆栈如下：
+12">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用二进制格式存储double数组，加载速度提升100倍">
-<meta property="og:url" content="http://yang.run/2016/03/07/Improve-load-speed-by-100X-by-store-double-array-in-binary-format/index.html">
+<meta property="og:title" content="一个典型的多线程问题">
+<meta property="og:url" content="http://yang.run/2016/03/07/A-classic-multi-thread-problem/index.html">
 <meta property="og:site_name" content="Tim Yang's blog">
-<meta property="og:description" content="问题遇到一个配置文件，里面有近10000个double类型的数字，每个数字1行，加载到内存里变成List&amp;lt;Double&amp;gt;，在小米3上加载时间需要200多ms。这种写法可读性好，但牺牲了速度和文件大小。而这个文件的使用场景则是越快起好，使用文本方式储存double数组就显得非常naive了。
-文件内容类似下面这样123456-0.07442092964745924 -0.28022360">
-<meta property="og:updated_time" content="2016-03-08T03:42:27.338Z">
+<meta property="og:description" content="一天，同事抛给我一个线上崩溃。堆栈如下：
+12">
+<meta property="og:updated_time" content="2016-03-07T15:38:09.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用二进制格式存储double数组，加载速度提升100倍">
-<meta name="twitter:description" content="问题遇到一个配置文件，里面有近10000个double类型的数字，每个数字1行，加载到内存里变成List&amp;lt;Double&amp;gt;，在小米3上加载时间需要200多ms。这种写法可读性好，但牺牲了速度和文件大小。而这个文件的使用场景则是越快起好，使用文本方式储存double数组就显得非常naive了。
-文件内容类似下面这样123456-0.07442092964745924 -0.28022360">
+<meta name="twitter:title" content="一个典型的多线程问题">
+<meta name="twitter:description" content="一天，同事抛给我一个线上崩溃。堆栈如下：
+12">
 
 
 
@@ -75,7 +75,7 @@
   };
 </script>
 
-  <title> 使用二进制格式存储double数组，加载速度提升100倍 | Tim Yang's blog </title>
+  <title> 一个典型的多线程问题 | Tim Yang's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -195,7 +195,7 @@
             
             
               
-                使用二进制格式存储double数组，加载速度提升100倍
+                一个典型的多线程问题
               
             
           </h1>
@@ -204,7 +204,7 @@
         <div class="post-meta">
           <span class="post-time">
             Posted on
-            <time itemprop="dateCreated" datetime="2016-03-07T11:32:31+08:00" content="2016-03-07">
+            <time itemprop="dateCreated" datetime="2016-03-07T23:31:54+08:00" content="2016-03-07">
               2016-03-07
             </time>
           </span>
@@ -243,16 +243,8 @@
       
 
       
-        <span itemprop="articleBody"><h2 id="问题">问题</h2><p>遇到一个配置文件，里面有近10000个double类型的数字，每个数字1行，加载到内存里变成<code>List&lt;Double&gt;</code>，在小米3上加载时间需要200多ms。这种写法可读性好，但牺牲了速度和文件大小。而这个文件的使用场景则是越快起好，使用文本方式储存double数组就显得非常naive了。</p>
-<p>文件内容类似下面这样<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-<span class="number">0.07442092</span><span class="number">964745924</span> </span><br><span class="line">-<span class="number">0.280223605</span><span class="number">4615799</span> </span><br><span class="line">0 </span><br><span class="line">-<span class="number">9.125085940</span>770578e-018 </span><br><span class="line"><span class="number">0.264550123</span>930026 </span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
-<h2 id="解决方案">解决方案</h2><p>先Google了一下，<a href="http://stackoverflow.com/questions/4358875/fastest-way-to-write-an-array-of-integers-to-a-file-in-java" target="_blank" rel="external">StackOverflow</a>上有人问了这个问题，答案是在<code>DataOutputStream</code>, <code>ObjectOutputStream</code>, <code>FileChannel</code>三者之间FileChannel最快，因此直接上FileChannel。</p>
-<p>研究了一下Java的NIO(<code>FileChannel</code>, <code>DoubleBuffer</code>等）。使用内存映射重写了加载的逻辑。<strong>重写后加载时间只需要2ms了，速度快了100倍。文件大小也减小了约 60%。</strong></p>
-<p>经过研究发现StackOverflow的回答者给的代码还有很大优化空间，写int数组时使用提for循环，一个一个写，其实可以使用<code>IntBuffer</code>一次性写进去，这个速度应该快很多。</p>
-<p>下面是写入文件的代码，使用了<a href="https://en.wikipedia.org/wiki/Magic_number_%28programming%29%23Magic_numbers_in_files" target="_blank" rel="external">Magic Number</a> 技巧。实际使用中可以再增加版本号等其他 header 字段做进一步的校验，方便以后扩展文件格式。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> INT_SIZE = Integer.SIZE / Byte.SIZE;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DOUBLE_SIZE = Double.SIZE / Byte.SIZE;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAGIC_NUMBER = <span class="number">0x23424123</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeFileByChannel</span><span class="params">(File outputFile, <span class="keyword">double</span>[] data)</span> </span>&#123;</span><br><span class="line">    RandomAccessFile fos = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        fos = <span class="keyword">new</span> RandomAccessFile(outputFile, <span class="string">"rw"</span>);</span><br><span class="line">        FileChannel channel = fos.getChannel();</span><br><span class="line">        <span class="keyword">long</span> length = INT_SIZE * <span class="number">2</span> + data.length * DOUBLE_SIZE;</span><br><span class="line">        MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_WRITE, <span class="number">0</span>, length);</span><br><span class="line"></span><br><span class="line">        buffer.putInt(MAGIC_NUMBER);</span><br><span class="line">        buffer.putInt(data.length);</span><br><span class="line"></span><br><span class="line">        DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();</span><br><span class="line">        doubleBuffer.put(data);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        closeQuietly(fos);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>读取的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">double</span>[] readFileByChannel(File inputFile) &#123;</span><br><span class="line">    FileInputStream fis = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        fis = <span class="keyword">new</span> FileInputStream(inputFile);</span><br><span class="line">        FileChannel channel = fis.getChannel();</span><br><span class="line">        MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, <span class="number">0</span>, channel.size());</span><br><span class="line">        <span class="keyword">int</span> magicNumber = buffer.getInt();</span><br><span class="line">        <span class="keyword">if</span> (magicNumber != MAGIC_NUMBER) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"wrong file format, magic="</span> + Integer.toHexString(magicNumber));</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> size = buffer.getInt();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">double</span>[] doubles = <span class="keyword">new</span> <span class="keyword">double</span>[size];</span><br><span class="line">        buffer.asDoubleBuffer().get(doubles);</span><br><span class="line">        channel.close();</span><br><span class="line">        <span class="keyword">return</span> doubles;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        closeQuietly(fis);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="Note:">Note:</h2><p>需要注意的一点是，验证修改前后两种方法读取的数据是否相同时，比较符点数是否相等，不能使用 <code>==</code>，而应该使用 <code>Double.compare(double double1, double double2)</code>及<code>Float.compare(float float1, float float2)</code>。</p>
-<h2 id="Android兼容性：">Android兼容性：</h2><p><code>FileChannel</code>， <code>MappedByteBuffer</code>， <code>FileChannel.map()</code>，<code>DoubleBuffer</code>， <code>Double.compare</code>这些API从API Level 1就有的，可以放心使用。（但NIO2的API则无法使用。）</p>
+        <span itemprop="articleBody"><p>一天，同事抛给我一个线上崩溃。堆栈如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 </span>
       
     </div>
@@ -261,9 +253,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/NIO/" rel="tag">#NIO</a>
-          
-            <a href="/tags/内存映射/" rel="tag">#内存映射</a>
+            <a href="/tags/multi-thread/" rel="tag">#multi-thread</a>
           
         </div>
       
@@ -272,17 +262,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/12/12/JNI-tips-annotated/" rel="next" title="JNI Tips annotated">
-                <i class="fa fa-chevron-left"></i> JNI Tips annotated
+              <a href="/2016/03/07/Improve-load-speed-by-100X-by-store-double-array-in-binary-format/" rel="next" title="使用二进制格式存储double数组，加载速度提升100倍">
+                <i class="fa fa-chevron-left"></i> 使用二进制格式存储double数组，加载速度提升100倍
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/03/07/A-classic-multi-thread-problem/" rel="prev" title="一个典型的多线程问题">
-                一个典型的多线程问题 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -396,7 +382,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题"><span class="nav-number">1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Note:"><span class="nav-number">3.</span> <span class="nav-text">Note:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android兼容性："><span class="nav-number">4.</span> <span class="nav-text">Android兼容性：</span></a></li></ol></div>
+              <p class="post-toc-empty">This post does not have a Table Of Contents</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
