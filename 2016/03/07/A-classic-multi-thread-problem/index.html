@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="multi-thread," />
+  <meta name="keywords" content="多线程," />
 
 
 
@@ -51,19 +51,19 @@
 
 
 
-<meta name="description" content="一天，同事抛给我一个线上崩溃。堆栈如下：
-12">
+<meta name="description" content="一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）
+12345678E/AndroidRuntime: FATAL EXCEPTION: MultiThreadProblem#2Process: run.yang.test, PID: 7941java.lang.IllegalStateException: Timer was canceled    at java.util.Timer.sch">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个典型的多线程问题">
 <meta property="og:url" content="http://yang.run/2016/03/07/A-classic-multi-thread-problem/index.html">
 <meta property="og:site_name" content="Tim Yang's blog">
-<meta property="og:description" content="一天，同事抛给我一个线上崩溃。堆栈如下：
-12">
-<meta property="og:updated_time" content="2016-03-07T15:38:09.000Z">
+<meta property="og:description" content="一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）
+12345678E/AndroidRuntime: FATAL EXCEPTION: MultiThreadProblem#2Process: run.yang.test, PID: 7941java.lang.IllegalStateException: Timer was canceled    at java.util.Timer.sch">
+<meta property="og:updated_time" content="2016-03-08T03:44:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个典型的多线程问题">
-<meta name="twitter:description" content="一天，同事抛给我一个线上崩溃。堆栈如下：
-12">
+<meta name="twitter:description" content="一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）
+12345678E/AndroidRuntime: FATAL EXCEPTION: MultiThreadProblem#2Process: run.yang.test, PID: 7941java.lang.IllegalStateException: Timer was canceled    at java.util.Timer.sch">
 
 
 
@@ -204,7 +204,7 @@
         <div class="post-meta">
           <span class="post-time">
             Posted on
-            <time itemprop="dateCreated" datetime="2016-03-07T23:31:54+08:00" content="2016-03-07">
+            <time itemprop="dateCreated" datetime="2016-03-07T15:31:54+08:00" content="2016-03-07">
               2016-03-07
             </time>
           </span>
@@ -243,8 +243,16 @@
       
 
       
-        <span itemprop="articleBody"><p>一天，同事抛给我一个线上崩溃。堆栈如下：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+        <span itemprop="articleBody"><p>一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">E/AndroidRuntime: FATAL EXCEPTION: MultiThreadProblem#<span class="number">2</span></span><br><span class="line">Process: run<span class="class">.yang</span><span class="class">.test</span>, PID: <span class="number">7941</span></span><br><span class="line">java<span class="class">.lang</span><span class="class">.IllegalStateException</span>: Timer was canceled</span><br><span class="line">    at java<span class="class">.util</span><span class="class">.Timer</span><span class="class">.scheduleImpl</span>(Timer<span class="class">.java</span>:<span class="number">561</span>)</span><br><span class="line">    at java<span class="class">.util</span><span class="class">.Timer</span><span class="class">.schedule</span>(Timer<span class="class">.java</span>:<span class="number">459</span>)</span><br><span class="line">    at run<span class="class">.yang</span><span class="class">.test</span><span class="class">.ThreadProblem</span><span class="class">.problematicMethod</span>(ThreadProblem<span class="class">.java</span>:<span class="number">21</span>)</span><br><span class="line">    at run<span class="class">.yang</span><span class="class">.test</span><span class="class">.TestTimerMultiThreadProblem</span>$<span class="number">1</span>.<span class="function"><span class="title">run</span><span class="params">(TestTimerMultiThreadProblem.java:<span class="number">25</span>)</span></span></span><br><span class="line">    at java<span class="class">.lang</span><span class="class">.Thread</span><span class="class">.run</span>(Thread<span class="class">.java</span>:<span class="number">841</span>)</span><br></pre></td></tr></table></figure>
+<p>相应代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> AtomicBoolean sIsExecuting = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Timer sTimer;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">problematicMethod</span><span class="params">(<span class="keyword">int</span> ms)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sIsExecuting.get()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (sTimer != <span class="keyword">null</span>) &#123;</span><br><span class="line">        sTimer.cancel();</span><br><span class="line">        sTimer.purge();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sTimer = <span class="keyword">new</span> Timer();</span><br><span class="line">    sTimer.schedule(<span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            sIsExecuting.set(<span class="keyword">true</span>);</span><br><span class="line">            doActualWork();</span><br><span class="line">            sTimer = <span class="keyword">null</span>;</span><br><span class="line">            sIsExecuting.set(<span class="keyword">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, ms &gt;= <span class="number">0</span> ? ms : <span class="number">10000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>崩在 <code>sTimer.purge()</code>这一行。</p>
+<p>一看就是多线程问题。首先<code>AtomicBoolean</code>的用法不对，起不到应有的作用，多个线程仍然可能进入这个方法体。第二，由于第一个问题，判断了<code>sTimer != null</code>并不能保证调用<code>sTimer.cancel()</code>及后的方法时<code>sTimer</code>仍然不为空。</p>
+<p>修改后的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicBoolean sIsExecuting = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicReference&lt;Timer&gt; sTimer = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">problematicMethod</span><span class="params">(<span class="keyword">int</span> delayMillis)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sIsExecuting.get()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> Timer newTimer = <span class="keyword">new</span> Timer(<span class="string">"TimerName"</span>);</span><br><span class="line">    newTimer.schedule(<span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (sIsExecuting.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</span><br><span class="line">                doActualWork();</span><br><span class="line"></span><br><span class="line">                <span class="keyword">final</span> Timer thisTimer = sTimer.getAndSet(<span class="keyword">null</span>);</span><br><span class="line">                destroyTimer(thisTimer);</span><br><span class="line">                sIsExecuting.set(<span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, delayMillis &gt;= <span class="number">0</span> ? delayMillis : <span class="number">10000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> Timer oldTimer = sTimer.getAndSet(newTimer);</span><br><span class="line">    destroyTimer(oldTimer);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">destroyTimer</span><span class="params">(Timer timer)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (timer != <span class="keyword">null</span>) &#123;</span><br><span class="line">        timer.cancel();</span><br><span class="line">        timer.purge();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>顺便还修复了一个<code>Timer</code>未反初始化的问题。这个问题会造成Timer线程不退出。这也是非常容易忽视的问题，原代码在任务完成后直接将<code>sTimer</code>置空，而没有检查这时<code>sTimer</code>是否有值。</p>
+<p>Java的Timer很不好用，添加的任务无法取消，只能把Timer自己cancel了，然后这个Timer就不能用了，想用只能再new一个。还是Android的Handler方便。</p>
 </span>
       
     </div>
@@ -253,7 +261,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/multi-thread/" rel="tag">#multi-thread</a>
+            <a href="/tags/多线程/" rel="tag">#多线程</a>
           
         </div>
       
@@ -350,7 +358,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">10</span>
               <span class="site-state-item-name">tags</span>
               </a>
           </div>
