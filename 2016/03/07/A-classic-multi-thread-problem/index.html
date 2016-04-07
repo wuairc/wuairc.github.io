@@ -1,5 +1,11 @@
 <!doctype html>
-<html class="theme-next   use-motion ">
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -32,7 +38,7 @@
 
 <link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
   <meta name="keywords" content="多线程," />
@@ -44,7 +50,7 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
 
 
 
@@ -52,26 +58,32 @@
 
 
 <meta name="description" content="一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）
-12345678E/AndroidRuntime: FATAL EXCEPTION: MultiThreadProblem#2Process: run.yang.test, PID: 7941java.lang.NullPointerException    at java.util.Timer.scheduleImpl(Timer.java:">
+123456java.lang.NullPointerException    at java.util.Timer.scheduleImpl(Timer.java:561)    at java.util.Timer.schedule(Timer.java:459)    at run.yang.test.ThreadProblem.prob">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个典型的多线程问题">
 <meta property="og:url" content="http://yang.run/2016/03/07/A-classic-multi-thread-problem/index.html">
 <meta property="og:site_name" content="Tim Yang's blog">
 <meta property="og:description" content="一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）
-12345678E/AndroidRuntime: FATAL EXCEPTION: MultiThreadProblem#2Process: run.yang.test, PID: 7941java.lang.NullPointerException    at java.util.Timer.scheduleImpl(Timer.java:">
+123456java.lang.NullPointerException    at java.util.Timer.scheduleImpl(Timer.java:561)    at java.util.Timer.schedule(Timer.java:459)    at run.yang.test.ThreadProblem.prob">
 <meta property="og:updated_time" content="2016-03-08T03:44:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个典型的多线程问题">
 <meta name="twitter:description" content="一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）
-12345678E/AndroidRuntime: FATAL EXCEPTION: MultiThreadProblem#2Process: run.yang.test, PID: 7941java.lang.NullPointerException    at java.util.Timer.scheduleImpl(Timer.java:">
+123456java.lang.NullPointerException    at java.util.Timer.scheduleImpl(Timer.java:561)    at java.util.Timer.schedule(Timer.java:459)    at run.yang.test.ThreadProblem.prob">
 
 
 
 <script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
   var CONFIG = {
-    scheme: '',
-    sidebar: 'post',
-    motion: true
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
   };
 </script>
 
@@ -80,15 +92,6 @@
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
 
-  <!--[if lte IE 8]>
-  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
-    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
-      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
-           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
-           style='margin-left:auto;margin-right:auto;display: block;'/>
-    </a>
-  </div>
-<![endif]-->
   
 
 
@@ -96,7 +99,16 @@
 
 
 
-  <div class="container one-column page-post-detail">
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -125,7 +137,7 @@
   
 
   
-    <ul id="menu" class="menu ">
+    <ul id="menu" class="menu">
       
         
         <li class="menu-item menu-item-home">
@@ -159,7 +171,6 @@
       
 
       
-      
     </ul>
   
 
@@ -171,8 +182,9 @@
 
     <main id="main" class="main">
       <div class="main-inner">
-        <div id="content" class="content">
-          
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
 
   <div id="posts" class="posts-expand">
     
@@ -203,7 +215,10 @@
 
         <div class="post-meta">
           <span class="post-time">
-            Posted on
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
             <time itemprop="dateCreated" datetime="2016-03-07T15:31:54+08:00" content="2016-03-07">
               2016-03-07
             </time>
@@ -211,7 +226,11 @@
 
           
             <span class="post-category" >
-              &nbsp; | &nbsp; In
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
                   <a href="/categories/工作经验/" itemprop="url" rel="index">
@@ -232,29 +251,44 @@
 
           
 
+          
+          
+
         </div>
       </header>
     
 
 
-    <div class="post-body">
+    <div class="post-body" itemprop="articleBody">
 
       
       
 
       
-        <span itemprop="articleBody"><p>一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">E/AndroidRuntime: FATAL EXCEPTION: MultiThreadProblem#<span class="number">2</span></span><br><span class="line">Process: run<span class="class">.yang</span><span class="class">.test</span>, PID: <span class="number">7941</span></span><br><span class="line">java<span class="class">.lang</span><span class="class">.NullPointerException</span></span><br><span class="line">    at java<span class="class">.util</span><span class="class">.Timer</span><span class="class">.scheduleImpl</span>(Timer<span class="class">.java</span>:<span class="number">561</span>)</span><br><span class="line">    at java<span class="class">.util</span><span class="class">.Timer</span><span class="class">.schedule</span>(Timer<span class="class">.java</span>:<span class="number">459</span>)</span><br><span class="line">    at run<span class="class">.yang</span><span class="class">.test</span><span class="class">.ThreadProblem</span><span class="class">.problematicMethod</span>(ThreadProblem<span class="class">.java</span>:<span class="number">21</span>)</span><br><span class="line">    at run<span class="class">.yang</span><span class="class">.test</span><span class="class">.TestTimerMultiThreadProblem</span>$<span class="number">1</span>.<span class="function"><span class="title">run</span><span class="params">(TestTimerMultiThreadProblem.java:<span class="number">25</span>)</span></span></span><br><span class="line">    at java<span class="class">.lang</span><span class="class">.Thread</span><span class="class">.run</span>(Thread<span class="class">.java</span>:<span class="number">841</span>)</span><br></pre></td></tr></table></figure>
+        <p>一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">java<span class="class">.lang</span><span class="class">.NullPointerException</span></span><br><span class="line">    at java<span class="class">.util</span><span class="class">.Timer</span><span class="class">.scheduleImpl</span>(Timer<span class="class">.java</span>:<span class="number">561</span>)</span><br><span class="line">    at java<span class="class">.util</span><span class="class">.Timer</span><span class="class">.schedule</span>(Timer<span class="class">.java</span>:<span class="number">459</span>)</span><br><span class="line">    at run<span class="class">.yang</span><span class="class">.test</span><span class="class">.ThreadProblem</span><span class="class">.problematicMethod</span>(ThreadProblem<span class="class">.java</span>:<span class="number">21</span>)</span><br><span class="line">    at run<span class="class">.yang</span><span class="class">.test</span><span class="class">.TestTimerMultiThreadProblem</span>$<span class="number">1</span>.<span class="function"><span class="title">run</span><span class="params">(TestTimerMultiThreadProblem.java:<span class="number">25</span>)</span></span></span><br><span class="line">    at java<span class="class">.lang</span><span class="class">.Thread</span><span class="class">.run</span>(Thread<span class="class">.java</span>:<span class="number">841</span>)</span><br></pre></td></tr></table></figure>
 <p>相应代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> AtomicBoolean sIsExecuting = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Timer sTimer;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">problematicMethod</span><span class="params">(<span class="keyword">int</span> ms)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sIsExecuting.get()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (sTimer != <span class="keyword">null</span>) &#123;</span><br><span class="line">        sTimer.cancel();</span><br><span class="line">        sTimer.purge();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sTimer = <span class="keyword">new</span> Timer();</span><br><span class="line">    sTimer.schedule(<span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            sIsExecuting.set(<span class="keyword">true</span>);</span><br><span class="line">            doActualWork();</span><br><span class="line">            sTimer = <span class="keyword">null</span>;</span><br><span class="line">            sIsExecuting.set(<span class="keyword">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, ms &gt;= <span class="number">0</span> ? ms : <span class="number">10000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>崩在 <code>sTimer.purge()</code>这一行。</p>
-<p>一看就是多线程问题。首先<code>AtomicBoolean</code>的用法不对，起不到应有的作用，多个线程仍然可能进入这个方法体。第二，由于第一个问题，判断了<code>sTimer != null</code>并不能保证调用<code>sTimer.cancel()</code>及后的方法时<code>sTimer</code>仍然不为空。</p>
-<p>这个问题属于有多线程的意识，但对<code>AtomicBoolean</code>不明所以，用的糊里糊涂。工作中之前也曾遇到过相同的问题，把原本的<code>boolean</code>直接替换成<code>AtomicBoolean</code>，，只使用<code>get</code>, <code>set</code>却不使用<code>compareAndSet</code>。</p>
+<p>显然是多线程导致的，查看调用<code>problematicMethod</code>的地方，果然是在不同线程里。首先<code>AtomicBoolean</code>的用法不对，起不到应有的作用，多个线程仍然可能进入这个方法体。第二，由于第一个问题，判断了<code>sTimer != null</code>并不能保证调用<code>sTimer.cancel()</code>及后的方法时<code>sTimer</code>仍然不为空。</p>
+<p>这个问题属于有多线程的意识，但对<code>AtomicBoolean</code>不明所以，用的糊里糊涂。工作中之前也曾遇到过相同的问题，把原本的<code>boolean</code>直接替换成<code>AtomicBoolean</code>，只使用<code>get</code>, <code>set</code>却不使用<code>compareAndSet</code>。</p>
 <p>修改后的代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicBoolean sIsExecuting = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicReference&lt;Timer&gt; sTimer = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">problematicMethod</span><span class="params">(<span class="keyword">int</span> delayMillis)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sIsExecuting.get()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> Timer newTimer = <span class="keyword">new</span> Timer(<span class="string">"TimerName"</span>);</span><br><span class="line">    newTimer.schedule(<span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (sIsExecuting.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</span><br><span class="line">                doActualWork();</span><br><span class="line"></span><br><span class="line">                <span class="keyword">final</span> Timer thisTimer = sTimer.getAndSet(<span class="keyword">null</span>);</span><br><span class="line">                destroyTimer(thisTimer);</span><br><span class="line">                sIsExecuting.set(<span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, delayMillis &gt;= <span class="number">0</span> ? delayMillis : <span class="number">10000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> Timer oldTimer = sTimer.getAndSet(newTimer);</span><br><span class="line">    destroyTimer(oldTimer);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">destroyTimer</span><span class="params">(Timer timer)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (timer != <span class="keyword">null</span>) &#123;</span><br><span class="line">        timer.cancel();</span><br><span class="line">        timer.purge();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>顺便还修复了一个<code>Timer</code>未反初始化的问题。这个问题会造成Timer线程不退出。这也是非常容易忽视的问题，原代码在任务完成后直接将<code>sTimer</code>置空，而没有检查这时<code>sTimer</code>是否有值。</p>
 <p>Java的Timer很不好用，添加的任务无法取消，只能把Timer自己cancel了，然后这个Timer就不能用了，想用只能再new一个。还是Android的Handler方便。</p>
-</span>
+
+      
+    </div>
+    
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
       
     </div>
 
@@ -279,6 +313,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2016/03/29/Using-ThreadGroup-to-monitor-thread-exit/" rel="prev" title="使用ThreadGroup监控线程退出">
+                使用ThreadGroup监控线程退出 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -296,21 +334,19 @@
   </div>
 
 
-        </div>
+          </div>
+          
 
-        
 
-
-        
+          
   <div class="comments" id="comments">
     
   </div>
 
 
-      </div>
-
-      
+        </div>
         
+          
   
   <div class="sidebar-toggle">
     <div class="sidebar-toggle-line-wrap">
@@ -328,7 +364,7 @@
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Table Of Contents
+            Table of Contents
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
             Overview
@@ -338,31 +374,37 @@
 
       <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" src="/images/my_avatar.png" alt="Tim Yang" itemprop="image"/>
+          <img class="site-author-image" itemprop="image"
+               src="/images/my_avatar.png"
+               alt="Tim Yang" />
           <p class="site-author-name" itemprop="name">Tim Yang</p>
+          <p class="site-description motion-element" itemprop="description">Android developer</p>
         </div>
-        <p class="site-description motion-element" itemprop="description">Android developer</p>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-count">9</span>
               <span class="site-state-item-name">posts</span>
             </a>
           </div>
 
-          <div class="site-state-item site-state-categories">
-            
-              <span class="site-state-item-count">2</span>
-              <span class="site-state-item-name">categories</span>
+          
+            <div class="site-state-item site-state-categories">
               
-          </div>
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">categories</span>
+              
+            </div>
+          
 
-          <div class="site-state-item site-state-tags">
-            <a href="/tags">
-              <span class="site-state-item-count">9</span>
-              <span class="site-state-item-name">tags</span>
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">tags</span>
               </a>
-          </div>
+            </div>
+          
 
         </nav>
 
@@ -375,7 +417,8 @@
         
         
 
-        <div class="links-of-author motion-element">
+        
+        <div class="links-of-blogroll motion-element">
           
         </div>
 
@@ -383,19 +426,13 @@
 
       
         <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc-indicator-top post-toc-indicator">
-            <i class="fa fa-angle-double-up"></i>
-          </div>
           <div class="post-toc">
             
               
             
             
-              <p class="post-toc-empty">This post does not have a Table Of Contents</p>
+              <p class="post-toc-empty">This post does not have a Table of Contents</p>
             
-          </div>
-          <div class="post-toc-indicator-bottom post-toc-indicator">
-            <i class="fa fa-angle-double-down"></i>
           </div>
         </section>
       
@@ -404,7 +441,8 @@
   </aside>
 
 
-      
+        
+      </div>
     </main>
 
     <footer id="footer" class="footer">
@@ -414,7 +452,7 @@
   &copy;  2015 - 
   <span itemprop="copyrightYear">2016</span>
   <span class="with-love">
-    <i class="icon-next-heart fa fa-heart"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">Tim Yang</span>
 </div>
@@ -426,7 +464,7 @@
 <div class="theme-info">
   Theme -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT
+    NexT.Muse
   </a>
 </div>
 
@@ -435,207 +473,78 @@
       </div>
     </footer>
 
-    <div class="back-to-top"></div>
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
   </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
 
   <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
 
-  
-  
-
-  
-    
-    
-
-  
-
-
-  
-
-  
-  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
-  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
-
-
-  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
-  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
-<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
-
-<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
-
-
   <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
   <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
 
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
   
-  
-<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
 
 
-<script type="text/javascript" id="sidebar.toc.highlight">
-  $(document).ready(function () {
-    var tocSelector = '.post-toc';
-    var $tocSelector = $(tocSelector);
-    var activeCurrentSelector = '.active-current';
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
 
-    $tocSelector
-      .on('activate.bs.scrollspy', function () {
-        var $currentActiveElement = $(tocSelector + ' .active').last();
-
-        removeCurrentActiveClass();
-        $currentActiveElement.addClass('active-current');
-
-        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
-      })
-      .on('clear.bs.scrollspy', function () {
-        removeCurrentActiveClass();
-      });
-
-    function removeCurrentActiveClass () {
-      $(tocSelector + ' ' + activeCurrentSelector)
-        .removeClass(activeCurrentSelector.substring(1));
-    }
-
-    function processTOC () {
-      getTOCMaxHeight();
-      toggleTOCOverflowIndicators();
-    }
-
-    function getTOCMaxHeight () {
-      var height = $('.sidebar').height() -
-                   $tocSelector.position().top -
-                   $('.post-toc-indicator-bottom').height();
-
-      $tocSelector.css('height', height);
-
-      return height;
-    }
-
-    function toggleTOCOverflowIndicators () {
-      tocOverflowIndicator(
-        '.post-toc-indicator-top',
-        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
-      );
-
-      tocOverflowIndicator(
-        '.post-toc-indicator-bottom',
-        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
-      )
-    }
-
-    $(document).on('sidebar.motion.complete', function () {
-      processTOC();
-    });
-
-    $('body').scrollspy({ target: tocSelector });
-    $(window).on('resize', function () {
-      if ( $('.sidebar').hasClass('sidebar-active') ) {
-        processTOC();
-      }
-    });
-
-    onScroll($tocSelector);
-
-    function onScroll (element) {
-      element.on('mousewheel DOMMouseScroll', function (event) {
-          var oe = event.originalEvent;
-          var delta = oe.wheelDelta || -oe.detail;
-
-          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
-          event.preventDefault();
-
-          toggleTOCOverflowIndicators();
-      });
-    }
-
-    function tocOverflowIndicator (indicator, action) {
-      var $indicator = $(indicator);
-      var opacity = action === 'show' ? 1 : 0;
-      $indicator.velocity ?
-        $indicator.velocity('stop').velocity({
-          opacity: opacity
-        }, { duration: 100 }) :
-        $indicator.stop().animate({
-          opacity: opacity
-        }, 100);
-    }
-
-  });
-</script>
-
-<script type="text/javascript" id="sidebar.nav">
-  $(document).ready(function () {
-    var html = $('html');
-    var TAB_ANIMATE_DURATION = 200;
-    var hasVelocity = $.isFunction(html.velocity);
-
-    $('.sidebar-nav li').on('click', function () {
-      var item = $(this);
-      var activeTabClassName = 'sidebar-nav-active';
-      var activePanelClassName = 'sidebar-panel-active';
-      if (item.hasClass(activeTabClassName)) {
-        return;
-      }
-
-      var currentTarget = $('.' + activePanelClassName);
-      var target = $('.' + item.data('target'));
-
-      hasVelocity ?
-        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
-          target
-            .velocity('stop')
-            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
-            .addClass(activePanelClassName);
-        }) :
-        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
-          currentTarget.hide();
-          target
-            .stop()
-            .css({'opacity': 0, 'display': 'block'})
-            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
-              currentTarget.removeClass(activePanelClassName);
-              target.addClass(activePanelClassName);
-            });
-        });
-
-      item.siblings().removeClass(activeTabClassName);
-      item.addClass(activeTabClassName);
-    });
-
-    $('.post-toc a').on('click', function (e) {
-      e.preventDefault();
-      var targetSelector = escapeSelector(this.getAttribute('href'));
-      var offset = $(targetSelector).offset().top;
-      hasVelocity ?
-        html.velocity('stop').velocity('scroll', {
-          offset: offset  + 'px',
-          mobileHA: false
-        }) :
-        $('html, body').stop().animate({
-          scrollTop: offset
-        }, 500);
-    });
-
-    // Expand sidebar on post detail page by default, when post has a toc.
-    motionMiddleWares.sidebar = function () {
-      var $tocContent = $('.post-toc-content');
-      if (CONFIG.sidebar === 'post') {
-        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
-          displaySidebar();
-        }
-      }
-    };
-  });
-</script>
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
 
 
-
-  <script type="text/javascript" src="/js/bootstrap.js"></script>
 
   
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=0.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
   
 
 </body>
