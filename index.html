@@ -268,7 +268,41 @@
       
         
           
-            <p>性能优化时</p>
+            <h2 id="问题">问题</h2><p>做性能优化时，有这样一个需求：将运行时间短、申请内存多、结果不留在内存中的操作放到临时进程，运行完后杀掉这个进程，达到迅速降低内存占用的目的。</p>
+<p>这个需求的难点在于：</p>
+<ol>
+<li>临时任务在服务里运行，实测发现所有任务线程退出后，进程也不退出。进程中还有main, binder0, binder1等线程在运行</li>
+<li>放到临时进程的的代码里会起新的线程，有的是第三方SDK里new出来的，无法修改。怎样监控这些线程成了问题</li>
+</ol>
+<h2 id="ThreadGroup">ThreadGroup</h2><p>联想到操作系统中的父子进程，如果在一个线程中new 出现的新线程是是当前线程的子线程就好了。Google线程子线程无果。查看Thread的文档发现了下面的构造函数，<a href="http://developer.android.com/reference/java/lang/Thread.html#Thread%28java.lang.ThreadGroup, java.lang.Runnable%29" target="_blank" rel="external">可以指定线程所属的<code>ThreadGroup</code></a>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Thread(ThreadGroup group, Runnable runnable)</span><br><span class="line">Thread(ThreadGroup group, Runnable runnable, String threadName)</span><br><span class="line">Thread(ThreadGroup group, String threadName)</span><br><span class="line">Thread(ThreadGroup group, Runnable runnable, String threadName, <span class="keyword">long</span> stackSize)</span><br></pre></td></tr></table></figure>
+<p>再去看<a href="http://developer.android.com/reference/java/lang/ThreadGroup.html" target="_blank" rel="external"><code>ThreadGroup</code>的文档</a>，哈，正是我们需要的。<code>ThreadGroup</code>有以下特性：</p>
+<ol>
+<li>每个线程都属于一个<code>ThreadGroup</code>，如果构造函数没有指定，则与当前线程的<code>ThreadGroup</code>相同</li>
+<li><code>ThreadGroup</code>有层级结构，构造函数可以指定父ThreadGroup</li>
+<li>通过<code>ThreadGroup</code>可以获得属于这个ThreadGroup的线程</li>
+</ol>
+<p>基于以上特点，我们就可以基于<code>ThreadGroup</code>创造出线程的层级结构来。</p>
+<p>另外，<code>Thread.getAllStackTraces()</code>内部就是使用<code>ThreadGroup.enumerate</code>获得所有正在运行的线程的。</p>
+<p>虽然Android的ThreadGroup的文档里说，这个类obsolete了，并给出了<em>Effective Java</em>上对应的Item，书上给出的理由是：</p>
+<ol>
+<li>这个类没有设计好，是个半成品</li>
+<li>这个类的大部分功能，已经被其他类替代了</li>
+</ol>
+<p>对于我们的场景来说，这两个理由并不充分，而且没有更好的办法，用一下也无妨。</p>
+<h2 id="解决方案">解决方案</h2><ol>
+<li>使用<a href="http://developer.android.com/reference/java/util/concurrent/ThreadPoolExecutor.html" target="_blank" rel="external"><code>ThreadPoolExecutor</code>(链接)</a>来运行任务，定制<code>ThreadPoolExecutor</code>的<code>ThreadFactory</code>，给<code>ThreadFactory</code>产生的线程设置相同的<code>ThreadGroup</code>（记为rootThreadGroup）</li>
+<li>线程池设置 <code>allowCoreThreadTimeOut(true)</code>，以便一定时间没有新任务进来，线程池的线程都退出，防止干扰检测其他线程</li>
+<li>重写<code>ThreadPoolExecutor</code>的<code>beforeExecute</code>和<code>afterExecute</code>，统计运行完成的任务数</li>
+<li>所有任务完成后，监控线程恢复运行，定时检测rootThreadGroup中的线程个数。当个数为0或者超时时间到了，就杀进程，并上报还没退出的线程信息</li>
+<li>监控线程设置为<a href="http://developer.android.com/reference/java/lang/Thread.html#isDaemon%28%29" target="_blank" rel="external">Daemon</a>，有任务运行时暂停，线程池中的线程超时退出后开始检测。有新任务来了，停止本次检测</li>
+<li>为了解决有些任务添加进来后需要立即开始执行（如需要和用户交互的），将任务分为两类：常规任务和紧急任务，放在不同的线程池中运行：<ol>
+<li>常规线程池的参数：<code>new ThreadPoolExecutor(threadCount, threadCount, EXIT_DELAY_MILLI, TimeUnit.MILLISECONDS, new LinkedBlockingQueue&lt;Runnable&gt;(Integer.MAX_VALUE), threadFactory)</code>，最大线程数与CPU核数有关</li>
+<li>紧急线程池的参数：<code>new ThreadPoolExecutor(0, Integer.MAX_VALUE, _EXIT_DELAY_MILLI, TimeUnit.MILLISECONDS, new SynchronousQueue&lt;Runnable&gt;(), threadFactory);</code>，新任务来了，立刻交给工作线程运行，如果没有空闲的工作线程，则创建一个新的</li>
+</ol>
+</li>
+</ol>
+<h2 id="总结">总结</h2><p>ThreadGroup可以构建线程的层级结构，并管理其中的线程。平时我们写的代码，绝大部分都不会自定义ThreadGroup，因此可以用来监控一组相同来源的线程。</p>
 
           
         
@@ -1301,7 +1335,7 @@ GetStringUTFRegion
             
               
                 
-                <a class="post-title-link" href="/2015/11/25/hello-world/" itemprop="url">
+                <a class="post-title-link" href="/2015/11/23/hello-world/" itemprop="url">
                   Hello World
                 </a>
               
@@ -1315,8 +1349,8 @@ GetStringUTFRegion
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2015-11-25T22:47:35+08:00" content="2015-11-25">
-              2015-11-25
+            <time itemprop="dateCreated" datetime="2015-11-23T09:39:36+08:00" content="2015-11-23">
+              2015-11-23
             </time>
           </span>
 
@@ -1439,7 +1473,7 @@ GetStringUTFRegion
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
