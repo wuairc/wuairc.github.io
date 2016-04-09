@@ -41,7 +41,7 @@
 <link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="hexo," />
+  <meta name="keywords" content="Hexo," />
 
 
 
@@ -67,7 +67,7 @@ If that fail, try manual install:
 <meta property="og:description" content="Install nvm (Node Version Manager)1curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
 If that fail, try manual install:
 1git clone https://github.com/creationix/nvm.gi">
-<meta property="og:updated_time" content="2015-11-27T14:27:03.000Z">
+<meta property="og:updated_time" content="2016-04-09T06:23:27.758Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Install Hexo on Ubuntu">
 <meta name="twitter:description" content="Install nvm (Node Version Manager)1curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
@@ -153,6 +153,16 @@ If that fail, try manual install:
         </li>
       
         
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -228,6 +238,25 @@ If that fail, try manual install:
           </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
 
           
             
@@ -249,17 +278,19 @@ If that fail, try manual install:
       
 
       
-        <h2 id="Install_nvm_(Node_Version_Manager)">Install <a href="https://github.com/creationix/nvm" target="_blank" rel="external">nvm (Node Version Manager)</a></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.<span class="number">29.0</span>/install.sh | bash</span><br></pre></td></tr></table></figure>
+        <h2 id="Install_nvm_(Node_Version_Manager)">Install <a href="https://github.com/creationix/nvm" target="_blank" rel="external">nvm (Node Version Manager)</a></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash</span><br></pre></td></tr></table></figure>
 <p>If that fail, try manual install:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/creationix/nvm.git ~/.nvm &amp;&amp; <span class="built_in">cd</span> ~/.nvm &amp;&amp; git checkout `git describe --abbrev=<span class="number">0</span> --tags`</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/creationix/nvm.git ~/.nvm &amp;&amp; <span class="built_in">cd</span> ~/.nvm &amp;&amp; git checkout `git describe --abbrev=0 --tags`</span><br></pre></td></tr></table></figure>
 <p>Then add these lines to <code>~/.bashrc</code>, <code>~/profile</code>, or <code>~/.zshrc</code>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> NVM_DIR=<span class="string">"<span class="variable">$HOME</span>/.nvm"</span></span><br><span class="line">[ <span class="operator">-s</span> <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> ] &amp;&amp; . <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> <span class="comment"># This loads nvm</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> NVM_DIR=<span class="string">"<span class="variable">$HOME</span>/.nvm"</span></span><br><span class="line">[ <span class="_">-s</span> <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> ] &amp;&amp; . <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> <span class="comment"># This loads nvm</span></span><br></pre></td></tr></table></figure>
 <p>At last, reopen your terminal or logout and login again.</p>
 <h2 id="Install_Node_and_npm">Install Node and npm</h2><p>nvm bundles node with npm (node package manager), so you only need to install node.</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">nvm install node  <span class="comment"># this install the latest version of node</span></span><br><span class="line"></span><br><span class="line">nvm use node <span class="comment"># use the latest vesion of node</span></span><br><span class="line"></span><br><span class="line">nvm <span class="built_in">alias</span> default node  <span class="comment"># set a default node version to be used on any new shell</span></span><br><span class="line"></span><br><span class="line">nvm ls  <span class="comment"># list installed node vesions</span></span><br><span class="line"></span><br><span class="line">nvm ls-remote <span class="comment"># list what vesions are available to install</span></span><br></pre></td></tr></table></figure>
 <h2 id="Install_hexo_and_init_a_blog">Install <a href="https://hexo.io/" target="_blank" rel="external">hexo</a> and init a blog</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
 <hr>
-<p>done.</p>
+<p>Done.</p>
+<p>Reference: <a href="https://hexo.io/docs/index.html" target="_blank" rel="external">https://hexo.io/docs/index.html</a></p>
 
       
     </div>
@@ -280,7 +311,7 @@ If that fail, try manual install:
       
         <div class="post-tags">
           
-            <a href="/tags/hexo/" rel="tag">#hexo</a>
+            <a href="/tags/Hexo/" rel="tag">#Hexo</a>
           
         </div>
       
@@ -289,7 +320,7 @@ If that fail, try manual install:
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/11/23/hello-world/" rel="next" title="Hello World">
+              <a href="/2015/11/22/hello-world/" rel="next" title="Hello World">
                 <i class="fa fa-chevron-left"></i> Hello World
               </a>
             
@@ -374,10 +405,10 @@ If that fail, try manual install:
 
           
             <div class="site-state-item site-state-categories">
-              
-                <span class="site-state-item-count">2</span>
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">categories</span>
-              
+              </a>
             </div>
           
 

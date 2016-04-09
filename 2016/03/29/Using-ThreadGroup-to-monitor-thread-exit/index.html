@@ -71,7 +71,7 @@
 
 临时任务在服务里运行，实测发现所有任务线程退出后，进程也不退出。进程中还有main, binder0, binder1等线程在运行
 放到临时进程的的代码里会起新的线程，有的是第三方SDK里new出来的，无法修改。怎样监控这些线程">
-<meta property="og:updated_time" content="2016-04-08T11:31:20.048Z">
+<meta property="og:updated_time" content="2016-04-09T06:19:22.894Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用ThreadGroup监控线程退出">
 <meta name="twitter:description" content="问题做性能优化时，有这样一个需求：将运行时间短、申请内存多、结果不留在内存中的操作放到临时进程，运行完后杀掉这个进程，达到迅速降低内存占用的目的。
@@ -155,6 +155,16 @@
               <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
             
             Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            Categories
           </a>
         </li>
       
@@ -280,6 +290,7 @@
 <li>临时任务在服务里运行，实测发现所有任务线程退出后，进程也不退出。进程中还有main, binder0, binder1等线程在运行</li>
 <li>放到临时进程的的代码里会起新的线程，有的是第三方SDK里new出来的，无法修改。怎样监控这些线程成了问题</li>
 </ol>
+<a id="more"></a>
 <h2 id="ThreadGroup">ThreadGroup</h2><p>联想到操作系统中的父子进程，如果在一个线程中new 出现的新线程是是当前线程的子线程就好了。Google线程子线程无果。查看Thread的文档发现了下面的构造函数，<a href="http://developer.android.com/reference/java/lang/Thread.html#Thread%28java.lang.ThreadGroup, java.lang.Runnable%29" target="_blank" rel="external">可以指定线程所属的<code>ThreadGroup</code></a>：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Thread(ThreadGroup group, Runnable runnable)</span><br><span class="line">Thread(ThreadGroup group, Runnable runnable, String threadName)</span><br><span class="line">Thread(ThreadGroup group, String threadName)</span><br><span class="line">Thread(ThreadGroup group, Runnable runnable, String threadName, <span class="keyword">long</span> stackSize)</span><br></pre></td></tr></table></figure>
 <p>再去看<a href="http://developer.android.com/reference/java/lang/ThreadGroup.html" target="_blank" rel="external"><code>ThreadGroup</code>的文档</a>，哈，正是我们需要的。<code>ThreadGroup</code>有以下特性：</p>
@@ -419,10 +430,10 @@
 
           
             <div class="site-state-item site-state-categories">
-              
-                <span class="site-state-item-count">2</span>
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">categories</span>
-              
+              </a>
             </div>
           
 

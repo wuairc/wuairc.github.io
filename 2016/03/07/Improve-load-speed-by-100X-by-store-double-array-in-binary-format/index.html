@@ -65,7 +65,7 @@
 <meta property="og:site_name" content="Tim Yang's blog">
 <meta property="og:description" content="问题遇到一个配置文件，里面有近10000个double类型的数字，每个数字1行，加载到内存里变成List&amp;lt;Double&amp;gt;，在小米3上加载时间需要200多ms。这种写法可读性好，但牺牲了速度和文件大小。而这个文件的使用场景则是越快起好，使用文本方式储存double数组就显得非常naive了。
 文件内容类似下面这样123456-0.07442092964745924 -0.28022360">
-<meta property="og:updated_time" content="2016-03-08T03:42:27.338Z">
+<meta property="og:updated_time" content="2016-04-09T06:20:27.866Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用二进制格式存储double数组，加载速度提升100倍">
 <meta name="twitter:description" content="问题遇到一个配置文件，里面有近10000个double类型的数字，每个数字1行，加载到内存里变成List&amp;lt;Double&amp;gt;，在小米3上加载时间需要200多ms。这种写法可读性好，但牺牲了速度和文件大小。而这个文件的使用场景则是越快起好，使用文本方式储存double数组就显得非常naive了。
@@ -146,6 +146,16 @@
               <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
             
             Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            Categories
           </a>
         </li>
       
@@ -266,7 +276,8 @@
 
       
         <h2 id="问题">问题</h2><p>遇到一个配置文件，里面有近10000个double类型的数字，每个数字1行，加载到内存里变成<code>List&lt;Double&gt;</code>，在小米3上加载时间需要200多ms。这种写法可读性好，但牺牲了速度和文件大小。而这个文件的使用场景则是越快起好，使用文本方式储存double数组就显得非常naive了。</p>
-<p>文件内容类似下面这样<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-<span class="number">0.07442092</span><span class="number">964745924</span> </span><br><span class="line">-<span class="number">0.280223605</span><span class="number">4615799</span> </span><br><span class="line">0 </span><br><span class="line">-<span class="number">9.125085940</span>770578e-018 </span><br><span class="line"><span class="number">0.264550123</span>930026 </span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
+<p>文件内容类似下面这样<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby"><span class="number">0</span>.<span class="number">074420</span>92964745924 </span><br><span class="line"></span>-<span class="ruby"><span class="number">0</span>.<span class="number">2802236054615799</span> </span><br><span class="line"></span>0 </span><br><span class="line">-<span class="ruby"><span class="number">9.125085940770578</span>e-<span class="number">01</span>8 </span><br><span class="line"></span>0.264550123930026 </span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
 <h2 id="解决方案">解决方案</h2><p>先Google了一下，<a href="http://stackoverflow.com/questions/4358875/fastest-way-to-write-an-array-of-integers-to-a-file-in-java" target="_blank" rel="external">StackOverflow</a>上有人问了这个问题，答案是在<code>DataOutputStream</code>, <code>ObjectOutputStream</code>, <code>FileChannel</code>三者之间FileChannel最快，因此直接上FileChannel。</p>
 <p>研究了一下Java的NIO(<code>FileChannel</code>, <code>DoubleBuffer</code>等）。使用内存映射重写了加载的逻辑。<strong>重写后加载时间只需要2ms了，速度快了100倍。文件大小也减小了约 60%。</strong></p>
 <p>经过研究发现StackOverflow的回答者给的代码还有很大优化空间，写int数组时使用提for循环，一个一个写，其实可以使用<code>IntBuffer</code>一次性写进去，这个速度应该快很多。</p>
@@ -391,10 +402,10 @@
 
           
             <div class="site-state-item site-state-categories">
-              
-                <span class="site-state-item-count">2</span>
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">categories</span>
-              
+              </a>
             </div>
           
 

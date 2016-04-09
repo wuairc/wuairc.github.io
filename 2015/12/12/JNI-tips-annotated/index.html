@@ -69,7 +69,7 @@ see also Getting Started with the NDK.
 see also Getting Started with the NDK.
 
  Java Native Interface Specification (Java 7)JavaVM and JNIEnvBoth of these are essentially pointers to pointers to function tables. (In">
-<meta property="og:updated_time" content="2015-12-12T14:30:24.013Z">
+<meta property="og:updated_time" content="2016-04-09T06:21:05.950Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JNI Tips annotated">
 <meta name="twitter:description" content="copied from JNI Tips .
@@ -152,6 +152,16 @@ see also Getting Started with the NDK.
               <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
             
             Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            Categories
           </a>
         </li>
       
@@ -281,6 +291,7 @@ see also Getting Started with the NDK.
 <li>The JNIEnv is used for thread-local storage. For this reason, <strong>you cannot share a JNIEnv between threads</strong>. If a piece of code has no other way to get its JNIEnv, you should share the JavaVM, and use <strong>GetEnv</strong> to discover the thread’s JNIEnv. (Assuming it has one; see <code>AttachCurrentThread</code> below.)</li>
 <li>The C declarations of JNIEnv and JavaVM are different from the C++ declarations. It’s a bad idea to include JNIEnv arguments in header files included by both languages.</li>
 </ol>
+<a id="more"></a>
 <h2 id="Threads">Threads</h2><ol>
 <li>All threads are Linux threads, scheduled by the kernel.</li>
 <li>They’re usually started from managed code (using Thread.start), but they can also be created elsewhere and then attached to the JavaVM. (e.g. <code>pthread_create</code>, <code>AttachCurrentThread</code>, <code>AttachCurrentThreadAsDaemon</code>). Until a thread is attached, it has no JNIEnv, and <strong>cannot make JNI calls</strong>.</li>
@@ -511,10 +522,10 @@ GetStringUTFRegion
 
           
             <div class="site-state-item site-state-categories">
-              
-                <span class="site-state-item-count">2</span>
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">categories</span>
-              
+              </a>
             </div>
           
 

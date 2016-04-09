@@ -71,7 +71,7 @@ whatis(1)whatis - display one-line manual page descriptions. useful options:
 
 -r --regex: interpret each keyword as a regex
 -w --wildcard: keyword(s) contain">
-<meta property="og:updated_time" content="2015-12-06T09:17:30.425Z">
+<meta property="og:updated_time" content="2016-04-09T06:22:59.590Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="whatis, which, whence, where, whereis, type, apropos">
 <meta name="twitter:description" content="command lines in this article assumes zsh.
@@ -159,6 +159,16 @@ whatis(1)whatis - display one-line manual page descriptions. useful options:
         </li>
       
         
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -234,6 +244,25 @@ whatis(1)whatis - display one-line manual page descriptions. useful options:
           </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
 
           
             
@@ -261,12 +290,13 @@ whatis(1)whatis - display one-line manual page descriptions. useful options:
 <li><code>-r</code> <code>--regex</code>: interpret each keyword as a regex</li>
 <li><code>-w</code> <code>--wildcard</code>: keyword(s) contain wildcards</li>
 </ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ whatis gcc</span><br><span class="line">gcc (<span class="number">1</span>)              - GNU project C and C++ compiler</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">where</span> whatis</span><br><span class="line">/usr/bin/whatis</span><br><span class="line"></span><br><span class="line">$ whatis -r <span class="string">'^wh'</span></span><br><span class="line">whatis (<span class="number">1</span>)           - display one-line manual page descriptions</span><br><span class="line">whereis (<span class="number">1</span>)          - locate the binary, <span class="built_in">source</span>, and manual page files <span class="keyword">for</span> a...</span><br><span class="line"><span class="built_in">which</span> (<span class="number">1</span>)            - locate a <span class="built_in">command</span></span><br><span class="line">whiptail (<span class="number">1</span>)         - display dialog boxes from shell scripts</span><br><span class="line">WhitePixel (<span class="number">3</span>)       - Display macros and <span class="built_in">functions</span></span><br><span class="line">WhitePixelOfScreen (<span class="number">3</span>) - screen information <span class="built_in">functions</span> and macros</span><br><span class="line">who (<span class="number">1</span>)              - show who is logged on</span><br><span class="line">whoami (<span class="number">1</span>)           - <span class="built_in">print</span> effective userid</span><br><span class="line">whois (<span class="number">1</span>)            - client <span class="keyword">for</span> the whois directory service</span><br><span class="line">whois.conf (<span class="number">5</span>)       - alternative WHOIS servers list <span class="keyword">for</span> whois client</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ whatis gcc</span><br><span class="line">gcc (1)              - GNU project C and C++ compiler</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">where</span> whatis</span><br><span class="line">/usr/bin/whatis</span><br><span class="line"></span><br><span class="line">$ whatis -r <span class="string">'^wh'</span></span><br><span class="line">whatis (1)           - display one-line manual page descriptions</span><br><span class="line">whereis (1)          - locate the binary, <span class="built_in">source</span>, and manual page files <span class="keyword">for</span> a...</span><br><span class="line"><span class="built_in">which</span> (1)            - locate a <span class="built_in">command</span></span><br><span class="line">whiptail (1)         - display dialog boxes from shell scripts</span><br><span class="line">WhitePixel (3)       - Display macros and <span class="built_in">functions</span></span><br><span class="line">WhitePixelOfScreen (3) - screen information <span class="built_in">functions</span> and macros</span><br><span class="line">who (1)              - show who is logged on</span><br><span class="line">whoami (1)           - <span class="built_in">print</span> effective userid</span><br><span class="line">whois (1)            - client <span class="keyword">for</span> the whois directory service</span><br><span class="line">whois.conf (5)       - alternative WHOIS servers list <span class="keyword">for</span> whois client</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 <h2 id="which(1)">which(1)</h2><p>In <code>zsh</code>, this is a shell <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">built-in command</a>:, equivalent to <code>whence -c</code>. In <code>bash</code>, this is <code>/usr/bin/which</code>.<br>Useful options (for <code>/usr/bin/which</code>):</p>
 <ul>
 <li><code>-a</code>: print all matching pathnames of each argument</li>
 </ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ whatis <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span> (<span class="number">1</span>)            - locate a <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">where</span> <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span>: shell built-in <span class="built_in">command</span></span><br><span class="line">/usr/bin/<span class="built_in">which</span></span><br><span class="line">/bin/<span class="built_in">which</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ whatis <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span> (1)            - locate a <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">where</span> <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span>: shell built-in <span class="built_in">command</span></span><br><span class="line">/usr/bin/<span class="built_in">which</span></span><br><span class="line">/bin/<span class="built_in">which</span></span><br></pre></td></tr></table></figure>
 <h2 id="whence">whence</h2><p>whence is a <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">zsh built-in command</a>. Useful options:</p>
 <ul>
 <li><code>-w</code>: For each name, print ‘name: word’ where word is one of <strong>alias</strong>, <strong>builtin</strong>, <strong>command</strong>, <strong>function</strong>, <strong>hashed</strong>, <strong>reserved</strong> or <strong>none</strong></li>
@@ -286,7 +316,7 @@ whatis(1)whatis - display one-line manual page descriptions. useful options:
 <li><code>-m</code>: Search only for manual sections</li>
 <li><code>-s</code>: Search only for sources</li>
 </ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ whereis stdio</span><br><span class="line">$ <span class="comment"># or </span></span><br><span class="line">$ whereis stdio.h</span><br><span class="line">$ <span class="comment"># or</span></span><br><span class="line">$ whereis stdio.cpp</span><br><span class="line">$ <span class="comment"># or </span></span><br><span class="line">$ whereis stdio.any_extension</span><br><span class="line">$ <span class="comment"># or</span></span><br><span class="line">$ whereis /any/path/stdio.any_extension</span><br><span class="line">stdio: /usr/include/stdio.h /usr/share/man/man3/stdio.<span class="number">3</span>.gz</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ whereis stdio</span><br><span class="line">$ <span class="comment"># or </span></span><br><span class="line">$ whereis stdio.h</span><br><span class="line">$ <span class="comment"># or</span></span><br><span class="line">$ whereis stdio.cpp</span><br><span class="line">$ <span class="comment"># or </span></span><br><span class="line">$ whereis stdio.any_extension</span><br><span class="line">$ <span class="comment"># or</span></span><br><span class="line">$ whereis /any/path/stdio.any_extension</span><br><span class="line">stdio: /usr/include/stdio.h /usr/share/man/man3/stdio.3.gz</span><br></pre></td></tr></table></figure>
 <h2 id="type">type</h2><p>type is a <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">shell built-in command</a>, equivalent to <code>whence -v</code>.<br>Bash shell also has this command with equivalent functionality.</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">type</span> zsh</span><br><span class="line">zsh is /usr/bin/zsh</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">type</span> <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span> is a shell <span class="built_in">builtin</span></span><br></pre></td></tr></table></figure>
 <h2 id="apropos(1)">apropos(1)</h2><p>apropos - search the manual page names and descriptions.<br>Each manual page has a short description available within it.  apropos searches the descriptions for instances of keyword. Keywords are regex by default.</p>
@@ -411,10 +441,10 @@ whatis(1)whatis - display one-line manual page descriptions. useful options:
 
           
             <div class="site-state-item site-state-categories">
-              
-                <span class="site-state-item-count">2</span>
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">categories</span>
-              
+              </a>
             </div>
           
 

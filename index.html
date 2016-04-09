@@ -41,7 +41,7 @@
 <link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android, Java, Blog" />
+  <meta name="keywords" content="Android Developer, Java, Blog" />
 
 
 
@@ -144,6 +144,16 @@
               <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
             
             Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            Categories
           </a>
         </li>
       
@@ -267,44 +277,17 @@
 
       
         
-          
-            <h2 id="问题">问题</h2><p>做性能优化时，有这样一个需求：将运行时间短、申请内存多、结果不留在内存中的操作放到临时进程，运行完后杀掉这个进程，达到迅速降低内存占用的目的。</p>
+          <h2 id="问题">问题</h2><p>做性能优化时，有这样一个需求：将运行时间短、申请内存多、结果不留在内存中的操作放到临时进程，运行完后杀掉这个进程，达到迅速降低内存占用的目的。</p>
 <p>这个需求的难点在于：</p>
 <ol>
 <li>临时任务在服务里运行，实测发现所有任务线程退出后，进程也不退出。进程中还有main, binder0, binder1等线程在运行</li>
 <li>放到临时进程的的代码里会起新的线程，有的是第三方SDK里new出来的，无法修改。怎样监控这些线程成了问题</li>
 </ol>
-<h2 id="ThreadGroup">ThreadGroup</h2><p>联想到操作系统中的父子进程，如果在一个线程中new 出现的新线程是是当前线程的子线程就好了。Google线程子线程无果。查看Thread的文档发现了下面的构造函数，<a href="http://developer.android.com/reference/java/lang/Thread.html#Thread%28java.lang.ThreadGroup, java.lang.Runnable%29" target="_blank" rel="external">可以指定线程所属的<code>ThreadGroup</code></a>：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Thread(ThreadGroup group, Runnable runnable)</span><br><span class="line">Thread(ThreadGroup group, Runnable runnable, String threadName)</span><br><span class="line">Thread(ThreadGroup group, String threadName)</span><br><span class="line">Thread(ThreadGroup group, Runnable runnable, String threadName, <span class="keyword">long</span> stackSize)</span><br></pre></td></tr></table></figure>
-<p>再去看<a href="http://developer.android.com/reference/java/lang/ThreadGroup.html" target="_blank" rel="external"><code>ThreadGroup</code>的文档</a>，哈，正是我们需要的。<code>ThreadGroup</code>有以下特性：</p>
-<ol>
-<li>每个线程都属于一个<code>ThreadGroup</code>，如果构造函数没有指定，则与当前线程的<code>ThreadGroup</code>相同</li>
-<li><code>ThreadGroup</code>有层级结构，构造函数可以指定父ThreadGroup</li>
-<li>通过<code>ThreadGroup</code>可以获得属于这个ThreadGroup的线程</li>
-</ol>
-<p>基于以上特点，我们就可以基于<code>ThreadGroup</code>创造出线程的层级结构来。</p>
-<p>另外，<code>Thread.getAllStackTraces()</code>内部就是使用<code>ThreadGroup.enumerate</code>获得所有正在运行的线程的。</p>
-<p>虽然Android的ThreadGroup的文档里说，这个类obsolete了，并给出了<em>Effective Java</em>上对应的Item，书上给出的理由是：</p>
-<ol>
-<li>这个类没有设计好，是个半成品</li>
-<li>这个类的大部分功能，已经被其他类替代了</li>
-</ol>
-<p>对于我们的场景来说，这两个理由并不充分，而且没有更好的办法，用一下也无妨。</p>
-<h2 id="解决方案">解决方案</h2><ol>
-<li>使用<a href="http://developer.android.com/reference/java/util/concurrent/ThreadPoolExecutor.html" target="_blank" rel="external"><code>ThreadPoolExecutor</code>(链接)</a>来运行任务，定制<code>ThreadPoolExecutor</code>的<code>ThreadFactory</code>，给<code>ThreadFactory</code>产生的线程设置相同的<code>ThreadGroup</code>（记为rootThreadGroup）</li>
-<li>线程池设置 <code>allowCoreThreadTimeOut(true)</code>，以便一定时间没有新任务进来，线程池的线程都退出，防止干扰检测其他线程</li>
-<li>重写<code>ThreadPoolExecutor</code>的<code>beforeExecute</code>和<code>afterExecute</code>，统计运行完成的任务数</li>
-<li>所有任务完成后，监控线程恢复运行，定时检测rootThreadGroup中的线程个数。当个数为0或者超时时间到了，就杀进程，并上报还没退出的线程信息</li>
-<li>监控线程设置为<a href="http://developer.android.com/reference/java/lang/Thread.html#isDaemon%28%29" target="_blank" rel="external">Daemon</a>，有任务运行时暂停，线程池中的线程超时退出后开始检测。有新任务来了，停止本次检测</li>
-<li>为了解决有些任务添加进来后需要立即开始执行（如需要和用户交互的），将任务分为两类：常规任务和紧急任务，放在不同的线程池中运行：<ol>
-<li>常规线程池的参数：<code>new ThreadPoolExecutor(threadCount, threadCount, EXIT_DELAY_MILLI, TimeUnit.MILLISECONDS, new LinkedBlockingQueue&lt;Runnable&gt;(Integer.MAX_VALUE), threadFactory)</code>，最大线程数与CPU核数有关</li>
-<li>紧急线程池的参数：<code>new ThreadPoolExecutor(0, Integer.MAX_VALUE, _EXIT_DELAY_MILLI, TimeUnit.MILLISECONDS, new SynchronousQueue&lt;Runnable&gt;(), threadFactory);</code>，新任务来了，立刻交给工作线程运行，如果没有空闲的工作线程，则创建一个新的</li>
-</ol>
-</li>
-</ol>
-<h2 id="总结">总结</h2><p>ThreadGroup可以构建线程的层级结构，并管理其中的线程。平时我们写的代码，绝大部分都不会自定义ThreadGroup，因此可以用来监控一组相同来源的线程。</p>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/03/29/Using-ThreadGroup-to-monitor-thread-exit/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -413,20 +396,14 @@
 
       
         
-          
-            <p>一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">java<span class="class">.lang</span><span class="class">.NullPointerException</span></span><br><span class="line">    at java<span class="class">.util</span><span class="class">.Timer</span><span class="class">.scheduleImpl</span>(Timer<span class="class">.java</span>:<span class="number">561</span>)</span><br><span class="line">    at java<span class="class">.util</span><span class="class">.Timer</span><span class="class">.schedule</span>(Timer<span class="class">.java</span>:<span class="number">459</span>)</span><br><span class="line">    at run<span class="class">.yang</span><span class="class">.test</span><span class="class">.ThreadProblem</span><span class="class">.problematicMethod</span>(ThreadProblem<span class="class">.java</span>:<span class="number">21</span>)</span><br><span class="line">    at run<span class="class">.yang</span><span class="class">.test</span><span class="class">.TestTimerMultiThreadProblem</span>$<span class="number">1</span>.<span class="function"><span class="title">run</span><span class="params">(TestTimerMultiThreadProblem.java:<span class="number">25</span>)</span></span></span><br><span class="line">    at java<span class="class">.lang</span><span class="class">.Thread</span><span class="class">.run</span>(Thread<span class="class">.java</span>:<span class="number">841</span>)</span><br></pre></td></tr></table></figure>
+          <p>一天，同事抛给我一个线上崩溃。堆栈如下（复现的代码）</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">java<span class="selector-class">.lang</span><span class="selector-class">.NullPointerException</span></span><br><span class="line">    at java<span class="selector-class">.util</span><span class="selector-class">.Timer</span><span class="selector-class">.scheduleImpl</span>(Timer<span class="selector-class">.java</span>:<span class="number">561</span>)</span><br><span class="line">    at java<span class="selector-class">.util</span><span class="selector-class">.Timer</span><span class="selector-class">.schedule</span>(Timer<span class="selector-class">.java</span>:<span class="number">459</span>)</span><br><span class="line">    at run<span class="selector-class">.yang</span><span class="selector-class">.test</span><span class="selector-class">.ThreadProblem</span><span class="selector-class">.problematicMethod</span>(ThreadProblem<span class="selector-class">.java</span>:<span class="number">21</span>)</span><br><span class="line">    at run<span class="selector-class">.yang</span><span class="selector-class">.test</span><span class="selector-class">.TestTimerMultiThreadProblem</span>$<span class="number">1</span>.run(TestTimerMultiThreadProblem<span class="selector-class">.java</span>:<span class="number">25</span>)</span><br><span class="line">    at java<span class="selector-class">.lang</span><span class="selector-class">.Thread</span><span class="selector-class">.run</span>(Thread<span class="selector-class">.java</span>:<span class="number">841</span>)</span><br></pre></td></tr></table></figure>
 <p>相应代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> AtomicBoolean sIsExecuting = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Timer sTimer;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">problematicMethod</span><span class="params">(<span class="keyword">int</span> ms)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sIsExecuting.get()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (sTimer != <span class="keyword">null</span>) &#123;</span><br><span class="line">        sTimer.cancel();</span><br><span class="line">        sTimer.purge();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sTimer = <span class="keyword">new</span> Timer();</span><br><span class="line">    sTimer.schedule(<span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            sIsExecuting.set(<span class="keyword">true</span>);</span><br><span class="line">            doActualWork();</span><br><span class="line">            sTimer = <span class="keyword">null</span>;</span><br><span class="line">            sIsExecuting.set(<span class="keyword">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, ms &gt;= <span class="number">0</span> ? ms : <span class="number">10000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>崩在 <code>sTimer.purge()</code>这一行。</p>
-<p>显然是多线程导致的，查看调用<code>problematicMethod</code>的地方，果然是在不同线程里。首先<code>AtomicBoolean</code>的用法不对，起不到应有的作用，多个线程仍然可能进入这个方法体。第二，由于第一个问题，判断了<code>sTimer != null</code>并不能保证调用<code>sTimer.cancel()</code>及后的方法时<code>sTimer</code>仍然不为空。</p>
-<p>这个问题属于有多线程的意识，但对<code>AtomicBoolean</code>不明所以，用的糊里糊涂。工作中之前也曾遇到过相同的问题，把原本的<code>boolean</code>直接替换成<code>AtomicBoolean</code>，只使用<code>get</code>, <code>set</code>却不使用<code>compareAndSet</code>。</p>
-<p>修改后的代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicBoolean sIsExecuting = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicReference&lt;Timer&gt; sTimer = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">problematicMethod</span><span class="params">(<span class="keyword">int</span> delayMillis)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sIsExecuting.get()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> Timer newTimer = <span class="keyword">new</span> Timer(<span class="string">"TimerName"</span>);</span><br><span class="line">    newTimer.schedule(<span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (sIsExecuting.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</span><br><span class="line">                doActualWork();</span><br><span class="line"></span><br><span class="line">                <span class="keyword">final</span> Timer thisTimer = sTimer.getAndSet(<span class="keyword">null</span>);</span><br><span class="line">                destroyTimer(thisTimer);</span><br><span class="line">                sIsExecuting.set(<span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, delayMillis &gt;= <span class="number">0</span> ? delayMillis : <span class="number">10000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> Timer oldTimer = sTimer.getAndSet(newTimer);</span><br><span class="line">    destroyTimer(oldTimer);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">destroyTimer</span><span class="params">(Timer timer)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (timer != <span class="keyword">null</span>) &#123;</span><br><span class="line">        timer.cancel();</span><br><span class="line">        timer.purge();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>顺便还修复了一个<code>Timer</code>未反初始化的问题。这个问题会造成Timer线程不退出。这也是非常容易忽视的问题，原代码在任务完成后直接将<code>sTimer</code>置空，而没有检查这时<code>sTimer</code>是否有值。</p>
-<p>Java的Timer很不好用，添加的任务无法取消，只能把Timer自己cancel了，然后这个Timer就不能用了，想用只能再new一个。还是Android的Handler方便。</p>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/03/07/A-classic-multi-thread-problem/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -535,19 +512,13 @@
 
       
         
-          
-            <h2 id="问题">问题</h2><p>遇到一个配置文件，里面有近10000个double类型的数字，每个数字1行，加载到内存里变成<code>List&lt;Double&gt;</code>，在小米3上加载时间需要200多ms。这种写法可读性好，但牺牲了速度和文件大小。而这个文件的使用场景则是越快起好，使用文本方式储存double数组就显得非常naive了。</p>
-<p>文件内容类似下面这样<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-<span class="number">0.07442092</span><span class="number">964745924</span> </span><br><span class="line">-<span class="number">0.280223605</span><span class="number">4615799</span> </span><br><span class="line">0 </span><br><span class="line">-<span class="number">9.125085940</span>770578e-018 </span><br><span class="line"><span class="number">0.264550123</span>930026 </span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
-<h2 id="解决方案">解决方案</h2><p>先Google了一下，<a href="http://stackoverflow.com/questions/4358875/fastest-way-to-write-an-array-of-integers-to-a-file-in-java" target="_blank" rel="external">StackOverflow</a>上有人问了这个问题，答案是在<code>DataOutputStream</code>, <code>ObjectOutputStream</code>, <code>FileChannel</code>三者之间FileChannel最快，因此直接上FileChannel。</p>
-<p>研究了一下Java的NIO(<code>FileChannel</code>, <code>DoubleBuffer</code>等）。使用内存映射重写了加载的逻辑。<strong>重写后加载时间只需要2ms了，速度快了100倍。文件大小也减小了约 60%。</strong></p>
-<p>经过研究发现StackOverflow的回答者给的代码还有很大优化空间，写int数组时使用提for循环，一个一个写，其实可以使用<code>IntBuffer</code>一次性写进去，这个速度应该快很多。</p>
-<p>下面是写入文件的代码，使用了<a href="https://en.wikipedia.org/wiki/Magic_number_%28programming%29%23Magic_numbers_in_files" target="_blank" rel="external">Magic Number</a> 技巧。实际使用中可以再增加版本号等其他 header 字段做进一步的校验，方便以后扩展文件格式。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> INT_SIZE = Integer.SIZE / Byte.SIZE;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DOUBLE_SIZE = Double.SIZE / Byte.SIZE;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAGIC_NUMBER = <span class="number">0x23424123</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeFileByChannel</span><span class="params">(File outputFile, <span class="keyword">double</span>[] data)</span> </span>&#123;</span><br><span class="line">    RandomAccessFile fos = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        fos = <span class="keyword">new</span> RandomAccessFile(outputFile, <span class="string">"rw"</span>);</span><br><span class="line">        FileChannel channel = fos.getChannel();</span><br><span class="line">        <span class="keyword">long</span> length = INT_SIZE * <span class="number">2</span> + data.length * DOUBLE_SIZE;</span><br><span class="line">        MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_WRITE, <span class="number">0</span>, length);</span><br><span class="line"></span><br><span class="line">        buffer.putInt(MAGIC_NUMBER);</span><br><span class="line">        buffer.putInt(data.length);</span><br><span class="line"></span><br><span class="line">        DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();</span><br><span class="line">        doubleBuffer.put(data);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        closeQuietly(fos);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>读取的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">double</span>[] readFileByChannel(File inputFile) &#123;</span><br><span class="line">    FileInputStream fis = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        fis = <span class="keyword">new</span> FileInputStream(inputFile);</span><br><span class="line">        FileChannel channel = fis.getChannel();</span><br><span class="line">        MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, <span class="number">0</span>, channel.size());</span><br><span class="line">        <span class="keyword">int</span> magicNumber = buffer.getInt();</span><br><span class="line">        <span class="keyword">if</span> (magicNumber != MAGIC_NUMBER) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"wrong file format, magic="</span> + Integer.toHexString(magicNumber));</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> size = buffer.getInt();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">double</span>[] doubles = <span class="keyword">new</span> <span class="keyword">double</span>[size];</span><br><span class="line">        buffer.asDoubleBuffer().get(doubles);</span><br><span class="line">        channel.close();</span><br><span class="line">        <span class="keyword">return</span> doubles;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        closeQuietly(fis);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="Note:">Note:</h2><p>需要注意的一点是，验证修改前后两种方法读取的数据是否相同时，比较符点数是否相等，不能使用 <code>==</code>，而应该使用 <code>Double.compare(double double1, double double2)</code>及<code>Float.compare(float float1, float float2)</code>。</p>
-<h2 id="Android兼容性：">Android兼容性：</h2><p><code>FileChannel</code>， <code>MappedByteBuffer</code>， <code>FileChannel.map()</code>，<code>DoubleBuffer</code>， <code>Double.compare</code>这些API从API Level 1就有的，可以放心使用。（但NIO2的API则无法使用。）</p>
-
-          
+          <h2 id="问题">问题</h2><p>遇到一个配置文件，里面有近10000个double类型的数字，每个数字1行，加载到内存里变成<code>List&lt;Double&gt;</code>，在小米3上加载时间需要200多ms。这种写法可读性好，但牺牲了速度和文件大小。而这个文件的使用场景则是越快起好，使用文本方式储存double数组就显得非常naive了。</p>
+<p>文件内容类似下面这样<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby"><span class="number">0</span>.<span class="number">074420</span>92964745924 </span><br><span class="line"></span>-<span class="ruby"><span class="number">0</span>.<span class="number">2802236054615799</span> </span><br><span class="line"></span>0 </span><br><span class="line">-<span class="ruby"><span class="number">9.125085940770578</span>e-<span class="number">01</span>8 </span><br><span class="line"></span>0.264550123930026 </span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/03/07/Improve-load-speed-by-100X-by-store-double-array-in-binary-format/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -656,133 +627,21 @@
 
       
         
-          
-            <p>copied from <a href="http://developer.android.com/training/articles/perf-jni.html" target="_blank" rel="external">JNI Tips</a> .</p>
-<p>see also <a href="http://developer.android.com/ndk/guides/index.html" target="_blank" rel="external">Getting Started with the NDK</a>.</p>
+          <p>copied from <a href="http://developer.android.com/training/articles/perf-jni.html">JNI Tips</a> .</p>
+<p>see also <a href="http://developer.android.com/ndk/guides/index.html">Getting Started with the NDK</a>.</p>
 <hr>
-<h2 id="Java_Native_Interface_Specification_(Java_7)"><a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/jniTOC.html" target="_blank" rel="external"> Java Native Interface Specification (Java 7)</a></h2><h2 id="JavaVM_and_JNIEnv">JavaVM and JNIEnv</h2><p>Both of these are essentially pointers to pointers to function tables. (In the C++ version, they’re classes with a pointer to a function table and a member function for each JNI function that indirects through the table.)</p>
+<h2 id="Java_Native_Interface_Specification_(Java_7)"><a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/jniTOC.html"> Java Native Interface Specification (Java 7)</a></h2><h2 id="JavaVM_and_JNIEnv">JavaVM and JNIEnv</h2><p>Both of these are essentially pointers to pointers to function tables. (In the C++ version, they’re classes with a pointer to a function table and a member function for each JNI function that indirects through the table.)</p>
 <ol>
 <li>In theory you can have multiple JavaVMs per process, but <strong>Android only allows one</strong>.</li>
 <li>The JNIEnv provides most of the JNI functions. Your native functions all receive a JNIEnv as the first argument</li>
 <li>The JNIEnv is used for thread-local storage. For this reason, <strong>you cannot share a JNIEnv between threads</strong>. If a piece of code has no other way to get its JNIEnv, you should share the JavaVM, and use <strong>GetEnv</strong> to discover the thread’s JNIEnv. (Assuming it has one; see <code>AttachCurrentThread</code> below.)</li>
 <li>The C declarations of JNIEnv and JavaVM are different from the C++ declarations. It’s a bad idea to include JNIEnv arguments in header files included by both languages.</li>
 </ol>
-<h2 id="Threads">Threads</h2><ol>
-<li>All threads are Linux threads, scheduled by the kernel.</li>
-<li>They’re usually started from managed code (using Thread.start), but they can also be created elsewhere and then attached to the JavaVM. (e.g. <code>pthread_create</code>, <code>AttachCurrentThread</code>, <code>AttachCurrentThreadAsDaemon</code>). Until a thread is attached, it has no JNIEnv, and <strong>cannot make JNI calls</strong>.</li>
-<li>Attaching a natively-created thread causes a <code>java.lang.Thread</code> object to be constructed and added to the “main” <code>ThreadGroup</code>, making it visible to the debugger. Calling <code>AttachCurrentThread</code> on an already-attached thread is a no-op.</li>
-<li>If garbage collection is in progress, or the debugger has issued a suspend request, Android will pause the thread <strong>the next time it makes a JNI call</strong>.</li>
-<li>Threads attached through JNI <strong>must call</strong> <code>DetachCurrentThread</code> <strong>before they exit</strong>. <code>pthread_key_create</code> and <code>pthread_setspecific</code> come in handy.</li>
-</ol>
-<h2 id="jclass,_jmethodID,_and_jfieldID">jclass, jmethodID, and jfieldID</h2><p>If you want to access an object’s field from native code, you would do the following:</p>
-<ul>
-<li>Get the class object reference for the class with <code>FindClass</code></li>
-<li>Get the field ID for the field with <code>GetFieldID</code></li>
-<li>Get the contents of the field with something appropriate, such as <code>GetIntField</code></li>
-</ul>
-<p>Similarly, to call a method, you’d first get a class object reference and then a method ID. The IDs are often just pointers to internal runtime data structures. Looking them up may require several string comparisons, but once you have them the actual call to get the field or invoke the method is very quick.</p>
-<p><strong>If</strong> performance is important, it’s useful to look the values up once and <strong>cache the results in your native code</strong>. Because there is a limit of one JavaVM per process, it’s reasonable to <strong>store this data in a static local structure</strong>.</p>
-<p>The class references, field IDs, and method IDs are guaranteed valid until the class is unloaded. Classes are only unloaded if all classes associated with a ClassLoader can be garbage collected, which is rare but will not be impossible in Android.</p>
-<p>If you would like to cache the IDs when a class is loaded, and automatically re-cache them if the class is ever unloaded and reloaded, the correct way to initialize the IDs is to add a piece of code that looks like this to the appropriate class</p>
-<pre><code> /*
-  * <span class="type">We</span> use a class initializer to allow the native code to cache some
-  * field offsets. <span class="type">This</span> native function looks up <span class="keyword">and</span> caches interesting
-  * class/field/<span class="keyword">method</span> <span class="type">IDs</span>. <span class="type">Throws</span> on failure.
-  */
- private <span class="keyword">static</span> native <span class="type">void</span> nativeInit();
-
- <span class="keyword">static</span> {
-     nativeInit();
-}
-</code></pre><h2 id="Local_and_Global_References">Local and Global References</h2><p>Every argument passed to a native method, and almost every object returned by a JNI function is a “local reference”. This means that it’s valid for the duration of the current native method in the current thread. <strong>Even if the object itself continues to live on after the native method returns, the reference is not valid</strong>.</p>
-<p>This applies to all sub-classes of <code>jobject</code>, including <code>jclass</code>, <code>jstring</code>, and <code>jarray</code>. (The runtime will warn you about most reference mis-uses <strong>when extended JNI checks are enabled</strong>.)</p>
-<p>The only way to get non-local references is via the functions <code>NewGlobalRef</code> and <code>NewWeakGlobalRef</code>.</p>
-<p>If you want to hold on to a reference for a longer period, you must use a “global” reference. The <code>NewGlobalRef</code> function takes the local reference as an argument and returns a global one. The global reference is guaranteed to be valid until you call <code>DeleteGlobalRef</code>.</p>
-<p>This pattern is commonly used when caching a jclass returned from <code>FindClass</code>, e.g.:</p>
-<pre><code>jclass localClass = env-&gt;FindClass(<span class="string">"MyClass"</span>);
-jclass globalClass = <span class="keyword">reinterpret_cast</span>&lt;jclass&gt;(env-&gt;NewGlobalRef(localClass));
-</code></pre><p>All JNI methods accept both local and global references as arguments. It’s possible for references to the same object to have different values. For example, the return values from consecutive calls to <code>NewGlobalRef</code> on the same object may be different. To see if two references refer to the same object, you must use the <code>IsSameObject</code> function. <strong>Never compare references with == in native code</strong>.</p>
-<p>One consequence of this is that you <strong>must not assume object references are constant or unique in native code.</strong> The 32-bit value representing an object may be different from one invocation of a method to the next, and it’s possible that two different objects could have the same 32-bit value on consecutive calls.  Do not use <code>jobject</code> values as keys.</p>
-<p>Programmers are required to “not excessively allocate” local references. In practical terms this means that if you’re creating large numbers of local references, perhaps while running through an array of objects, you should <strong>free them manually with</strong> <code>DeleteLocalRef</code> <strong>instead of letting JNI do it for you</strong>. The implementation is only required to reserve slots for <strong>16</strong> local references, so if you need more than that you should either delete as you go or use <code>EnsureLocalCapacity</code>/<code>PushLocalFrame</code> to reserve more.</p>
-<p>Note that <code>jfieldID</code>s and <code>jmethodID</code>s <strong>are opaque types</strong>, not object references, and should not be passed to <code>NewGlobalRef</code>. The raw data pointers returned by functions like <code>GetStringUTFChars</code> and <code>GetByteArrayElements</code> are also <strong>not objects</strong>. (They may be passed between threads, and are valid until the matching Release call.)</p>
-<p>One unusual case deserves separate mention. If you attach a native thread with <code>AttachCurrentThread</code>, the code you are running <strong>will never automatically free local references until the thread detaches</strong>. Any local references you create will have to be <strong>deleted manually</strong>. In general, any native code that creates local references in a loop probably needs to do some manual deletion.</p>
-<h2 id="UTF-8_and_UTF-16_Strings">UTF-8 and UTF-16 Strings</h2><p>The Java programming language uses <code>UTF-16</code>. For convenience, JNI provides methods that work with <em><a href="https://en.wikipedia.org/wiki/UTF-8#Modified_UTF-8" target="_blank" rel="external">Modified UTF-8</a></em> as well. The modified encoding is <strong>useful for C code</strong> because it <strong>encodes \u0000 as 0xc0 0x80 instead of 0x00</strong>. The nice thing about this is that you can count on having C-style zero-terminated strings, <strong>suitable for use with standard libc string functions</strong>. The down side is that you <strong>cannot pass arbitrary UTF-8 data to JNI and expect it to work correctly</strong>.</p>
-<p>If possible, it’s usually faster to operate with UTF-16 strings. Android currently does not require a copy in <code>GetStringChars</code>, whereas <code>GetStringUTFChars</code> requires an allocation and a conversion to UTF-8. Note that <strong>UTF-16 strings are not zero-terminated</strong>, and \u0000 is allowed, so you need to hang on to the string length as well as the jchar pointer.</p>
-<p><strong>Don’t forget to</strong> <code>Release</code> <strong>the strings you</strong> <code>Get</code>. The string functions return <code>jchar*</code> or <code>jbyte*</code>, which are <strong>C-style pointers</strong> to primitive data rather than local references. They are guaranteed valid until <code>Release</code> is called, which means they are not released when the native method returns.</p>
-<p><strong>Data passed to</strong> <code>NewStringUTF</code> <strong>must be in Modified UTF-8 format</strong>. A common mistake is reading character data from a file or network stream and handing it to <code>NewStringUTF</code> without filtering it. Unless you know the data is 7-bit ASCII, you need to strip out high-ASCII characters or convert them to proper Modified UTF-8 form. If you don’t, the UTF-16 conversion will likely not be what you expect. The extended JNI checks will scan strings and warn you about invalid data, but they won’t catch everything.</p>
-<h2 id="Primitive_Arrays">Primitive Arrays</h2><p>While arrays of objects must be accessed one entry at a time, arrays of primitives can be read and written directly as if they were declared in C.</p>
-<p>To make the interface as efficient as possible without constraining the VM implementation, the <code>Get&lt;PrimitiveType&gt;ArrayElements</code> family of calls allows the runtime to either return a pointer to the actual elements, or allocate some memory and make a copy. Either way, the raw pointer returned is guaranteed to be valid until the corresponding <code>Release</code> call is issued (which implies that, if the data wasn’t copied, the array object will be pinned down and can’t be relocated as part of compacting the heap). <strong>You must</strong> <code>Release</code> <strong>every array you</strong> <code>Get</code>. Also, if the <code>Get</code> call fails, you must ensure that your code doesn’t try to <code>Release</code> a NULL pointer later.</p>
-<p>The <code>Release</code> call takes a <code>mode</code> argument that can have one of three values. The actions performed by the runtime depend upon whether it returned a pointer to the actual data or a copy of it.</p>
-<pre><code>isCopy, JNI_COMMIT, JNI_ABORT
-</code></pre><h2 id="Region_Calls">Region Calls</h2><p>There is an alternative to calls like <code>Get&lt;Type&gt;ArrayElements</code> and GetStringChars that may be very helpful when all you want to do is copy data in or out</p>
-<pre><code>env<span class="subst">-&gt;</span>GetByteArrayRegion(<span class="built_in">array</span>, <span class="number">0</span>, len, buffer);
-<span class="built_in">Set</span>&lt;<span class="keyword">Type</span>&gt;ArrayRegion
-GetStringRegion
-GetStringUTFRegion
-</code></pre><h2 id="Exceptions">Exceptions</h2><p><strong>You must not call most JNI functions while an exception is pending</strong>. Your code is expected to notice the exception (via the function’s return value, <code>ExceptionCheck</code>, or <code>ExceptionOccurred</code>) and return, or clear the exception and handle it.</p>
-<p>The only JNI functions that you are allowed to call while an exception is pending are:</p>
-<ul>
-<li><code>DeleteGlobalRef</code></li>
-<li><code>DeleteLocalRef</code></li>
-<li><code>DeleteWeakGlobalRef</code></li>
-<li><code>ExceptionCheck</code></li>
-<li><code>ExceptionClear</code></li>
-<li><code>ExceptionDescribe</code></li>
-<li><code>ExceptionOccurred</code></li>
-<li><code>MonitorExit</code></li>
-<li><code>PopLocalFrame</code></li>
-<li><code>PushLocalFrame</code></li>
-<li><code>Release&lt;PrimitiveType&gt;ArrayElements</code></li>
-<li><code>ReleasePrimitiveArrayCritical</code></li>
-<li><code>ReleaseStringChars</code></li>
-<li><code>ReleaseStringCritical</code></li>
-<li><code>ReleaseStringUTFChars</code></li>
-</ul>
-<p>Many JNI calls can throw an exception, but often provide a simpler way of checking for failure. For example, if <code>NewString</code> returns a non-NULL value, you don’t need to check for an exception. However, if you call a method (using a function like <code>CallObjectMethod</code>), <strong>you must always check for an exception</strong>, because the return value is not going to be valid if an exception was thrown.</p>
-<p>Note that exceptions thrown by interpreted code <strong>do not unwind native stack frames</strong>, and <strong>Android does not yet support C++ exceptions</strong>. The JNI <code>Throw</code> and <code>ThrowNew</code> instructions just set an exception pointer in the current thread. Upon returning to managed from native code, the exception will be noted and handled appropriately.</p>
-<p>Native code can “catch” an exception by calling <code>ExceptionCheck</code> or <code>ExceptionOccurred</code>, and clear it with <code>ExceptionClear</code>. As usual, discarding exceptions without handling them can lead to problems.</p>
-<p>There are no built-in functions for manipulating the <code>Throwable</code> object itself, so if you want to (say) get the exception string you will need to find the <code>Throwable</code> class, look up the method ID for <code>getMessage &quot;()Ljava/lang/String;&quot;</code>, invoke it, and if the result is non-NULL use <code>GetStringUTFChars</code> to get something you can hand to <code>printf(3)</code> or equivalent.</p>
-<h2 id="Extended_Checking">Extended Checking</h2><p>JNI does very little error checking. <strong>Errors usually result in a crash. Android also offers a mode called CheckJNI</strong>, where the JavaVM and JNIEnv function table pointers are switched to tables of functions <strong>that perform an extended series of checks before calling the standard implementation</strong>.</p>
-<p>There are several ways to enable CheckJNI.</p>
-<ol>
-<li>If you’re using the emulator, CheckJNI is on by default.</li>
-<li><p>If you have a rooted device, you can use the following sequence of commands to restart the runtime with CheckJNI enabled:</p>
-<p> adb shell stop<br> adb shell setprop dalvik.vm.checkjni true<br> adb shell start</p>
-</li>
-<li><p>for regular devices: <code>adb shell setprop debug.checkjni 1</code>, this won’t affect already-running apps, butany app launched from that point on will have CheckJNI enabled. </p>
-</li>
-<li>You can also set the android:debuggable attribute in your application’s manifest to turn on CheckJNI just for your app. Note that the Android build tools will do this automatically for certain build types. (WHAT ?)</li>
-</ol>
-<h2 id="Native_Libraries">Native Libraries</h2><p>You can load native code from shared libraries with the standard <code>System.loadLibrary</code> call. The preferred way to get at your native code is:</p>
-<ul>
-<li>Call <code>System.loadLibrary</code> from a static class initializer. The argument is the “<strong>undecorated</strong>“ library name, so to load “libfubar.so” you would pass in “fubar”.</li>
-<li>Provide a native function: <code>jint JNI_OnLoad(JavaVM* vm, void* reserved)</code></li>
-<li>In <code>JNI_OnLoad</code>, register all of your native methods. You should declare the methods “static” so the names don’t take up space in the symbol table on the device.</li>
-</ul>
-<p>The JNI_OnLoad function should look something like this if written in C++:</p>
-<pre><code><span class="function">jint <span class="title">JNI_OnLoad</span><span class="params">(JavaVM* vm, <span class="keyword">void</span>* reserved)</span>
-</span>{
-    JNIEnv* env;
-    <span class="keyword">if</span> (vm-&gt;GetEnv(<span class="keyword">reinterpret_cast</span>&lt;<span class="keyword">void</span>**&gt;(&amp;env), JNI_VERSION_1_6) != JNI_OK) {
-        <span class="keyword">return</span> -<span class="number">1</span>;
-    }
-
-    <span class="comment">// Get jclass with env-&gt;FindClass.</span>
-    <span class="comment">// Register methods with env-&gt;RegisterNatives.</span>
-
-    <span class="keyword">return</span> JNI_VERSION_1_6;
-}
-</code></pre><p>You can also call <code>System.load</code> with the <strong>full path name of the shared library</strong>. </p>
-<p>This is the recommended approach, but not the only approach. Explicit registration is not required, nor is it necessary that you provide a <code>JNI_OnLoad</code> function. You can instead use “discovery” of native methods that are named in a specific way (see the JNI spec for details), though this is less desirable because if a method signature is wrong you won’t know about it until the first time the method is actually used.</p>
-<p>One other note about <code>JNI_OnLoad</code>: any <code>FindClass</code> calls you make from there will happen in the context of the class loader that was used to load the shared library. Normally <code>FindClass</code> uses the loader associated with the method at the top of the interpreted stack, or if there isn’t one (because the thread was just attached) it uses the “system” class loader. This makes <code>JNI_OnLoad</code> a convenient place to look up and cache class object references.</p>
-<h2 id="64-bit_Considerations">64-bit Considerations</h2><p>For the most part this isn’t something that you will need to worry about when interacting with native code, but it becomes significant if you plan to store pointers to native structures in integer fields in an object. To support architectures that use 64-bit pointers, <strong>you need to stash your native pointers in a</strong> <code>long</code> <strong>field rather than an</strong> <code>int</code>.</p>
-<h2 id="Unsupported_Features/Backwards_Compatibility">Unsupported Features/Backwards Compatibility</h2><p>All JNI 1.6 features are supported, with the following exception:</p>
-<ol>
-<li><code>DefineClass</code> is not implemented.</li>
-</ol>
-<p>Before Android 4.0, Android 2.2, Android 2.0 respectively, there are some restrictions, see <a href="http://developer.android.com/training/articles/perf-jni.html#unsupported" target="_blank" rel="external">original text</a> for detail.</p>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/12/12/JNI-tips-annotated/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1118,6 +977,25 @@ GetStringUTFRegion
           </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
 
           
             
@@ -1140,51 +1018,18 @@ GetStringUTFRegion
 
       
         
-          
-            <p>command lines in this article assumes <code>zsh</code>.</p>
+          <p>command lines in this article assumes <code>zsh</code>.</p>
 <h2 id="whatis(1)">whatis(1)</h2><p>whatis - display one-line manual page descriptions. useful options:</p>
 <ul>
 <li><code>-r</code> <code>--regex</code>: interpret each keyword as a regex</li>
 <li><code>-w</code> <code>--wildcard</code>: keyword(s) contain wildcards</li>
 </ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ whatis gcc</span><br><span class="line">gcc (<span class="number">1</span>)              - GNU project C and C++ compiler</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">where</span> whatis</span><br><span class="line">/usr/bin/whatis</span><br><span class="line"></span><br><span class="line">$ whatis -r <span class="string">'^wh'</span></span><br><span class="line">whatis (<span class="number">1</span>)           - display one-line manual page descriptions</span><br><span class="line">whereis (<span class="number">1</span>)          - locate the binary, <span class="built_in">source</span>, and manual page files <span class="keyword">for</span> a...</span><br><span class="line"><span class="built_in">which</span> (<span class="number">1</span>)            - locate a <span class="built_in">command</span></span><br><span class="line">whiptail (<span class="number">1</span>)         - display dialog boxes from shell scripts</span><br><span class="line">WhitePixel (<span class="number">3</span>)       - Display macros and <span class="built_in">functions</span></span><br><span class="line">WhitePixelOfScreen (<span class="number">3</span>) - screen information <span class="built_in">functions</span> and macros</span><br><span class="line">who (<span class="number">1</span>)              - show who is logged on</span><br><span class="line">whoami (<span class="number">1</span>)           - <span class="built_in">print</span> effective userid</span><br><span class="line">whois (<span class="number">1</span>)            - client <span class="keyword">for</span> the whois directory service</span><br><span class="line">whois.conf (<span class="number">5</span>)       - alternative WHOIS servers list <span class="keyword">for</span> whois client</span><br></pre></td></tr></table></figure>
-<h2 id="which(1)">which(1)</h2><p>In <code>zsh</code>, this is a shell <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">built-in command</a>:, equivalent to <code>whence -c</code>. In <code>bash</code>, this is <code>/usr/bin/which</code>.<br>Useful options (for <code>/usr/bin/which</code>):</p>
-<ul>
-<li><code>-a</code>: print all matching pathnames of each argument</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ whatis <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span> (<span class="number">1</span>)            - locate a <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line">$ <span class="built_in">where</span> <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span>: shell built-in <span class="built_in">command</span></span><br><span class="line">/usr/bin/<span class="built_in">which</span></span><br><span class="line">/bin/<span class="built_in">which</span></span><br></pre></td></tr></table></figure>
-<h2 id="whence">whence</h2><p>whence is a <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">zsh built-in command</a>. Useful options:</p>
-<ul>
-<li><code>-w</code>: For each name, print ‘name: word’ where word is one of <strong>alias</strong>, <strong>builtin</strong>, <strong>command</strong>, <strong>function</strong>, <strong>hashed</strong>, <strong>reserved</strong> or <strong>none</strong></li>
-<li><code>-f</code>: Causes the contents of a shell function to be displayed</li>
-<li><code>-p</code>: Do a path search for name even if it is an alias, reserved word, shell function or builtin.</li>
-<li><code>-a</code>: Do a search for all occurrences of <em>name</em> throughout the command path.</li>
-<li><code>-m</code>: The arguments are taken as patterns (should be quoted)</li>
-<li><code>-c</code>: Print the results in a csh-like format. e.g. <code>which</code> in zsh.</li>
-</ul>
-<h2 id="where">where</h2><p>where is a <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">zsh built-in command</a>, equivalent to <code>whence -ca</code>.</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">where</span> grep</span><br><span class="line">grep: aliased to grep  --color=auto --exclude-dir=&#123;.bzr,CVS,.git,.hg,.svn&#125;</span><br><span class="line">/bin/grep</span><br></pre></td></tr></table></figure>
-<h2 id="whereis(1)">whereis(1)</h2><p>whereis - locate the binary, source, and manual page files for a command.</p>
-<p><strong>Note</strong>: the supplied names are first stripped of leading pathname components and any (single) trailing extension.</p>
-<p>Useful options:</p>
-<ul>
-<li><code>-b</code>: Search only for binaries</li>
-<li><code>-m</code>: Search only for manual sections</li>
-<li><code>-s</code>: Search only for sources</li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ whereis stdio</span><br><span class="line">$ <span class="comment"># or </span></span><br><span class="line">$ whereis stdio.h</span><br><span class="line">$ <span class="comment"># or</span></span><br><span class="line">$ whereis stdio.cpp</span><br><span class="line">$ <span class="comment"># or </span></span><br><span class="line">$ whereis stdio.any_extension</span><br><span class="line">$ <span class="comment"># or</span></span><br><span class="line">$ whereis /any/path/stdio.any_extension</span><br><span class="line">stdio: /usr/include/stdio.h /usr/share/man/man3/stdio.<span class="number">3</span>.gz</span><br></pre></td></tr></table></figure>
-<h2 id="type">type</h2><p>type is a <a href="http://linux.die.net/man/1/zshbuiltins" target="_blank" rel="external">shell built-in command</a>, equivalent to <code>whence -v</code>.<br>Bash shell also has this command with equivalent functionality.</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">type</span> zsh</span><br><span class="line">zsh is /usr/bin/zsh</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">type</span> <span class="built_in">which</span></span><br><span class="line"><span class="built_in">which</span> is a shell <span class="built_in">builtin</span></span><br></pre></td></tr></table></figure>
-<h2 id="apropos(1)">apropos(1)</h2><p>apropos - search the manual page names and descriptions.<br>Each manual page has a short description available within it.  apropos searches the descriptions for instances of keyword. Keywords are regex by default.</p>
-<p>Useful options:</p>
-<ul>
-<li><code>-r</code>, <code>--regex</code>: Interpret  each keyword as a regular expression.  This is the default behaviour</li>
-<li><code>-w</code>, <code>--wildcard</code>: Interpret each keyword as a pattern containing shell style wildcards</li>
-<li><code>-L locale</code>, <code>--locale=locale</code></li>
-</ul>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ apropos <span class="string">'^std'</span>  </span><br><span class="line">$ <span class="comment"># search C++ standard library functions (need to install doc package first).</span></span><br></pre></td></tr></table></figure>
-
-          
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ whatis gcc</span><br><span class="line">gcc (1)              - GNU project C and C++ compiler</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">where</span> whatis</span><br><span class="line">/usr/bin/whatis</span><br><span class="line"></span><br><span class="line">$ whatis -r <span class="string">'^wh'</span></span><br><span class="line">whatis (1)           - display one-line manual page descriptions</span><br><span class="line">whereis (1)          - locate the binary, <span class="built_in">source</span>, and manual page files <span class="keyword">for</span> a...</span><br><span class="line"><span class="built_in">which</span> (1)            - locate a <span class="built_in">command</span></span><br><span class="line">whiptail (1)         - display dialog boxes from shell scripts</span><br><span class="line">WhitePixel (3)       - Display macros and <span class="built_in">functions</span></span><br><span class="line">WhitePixelOfScreen (3) - screen information <span class="built_in">functions</span> and macros</span><br><span class="line">who (1)              - show who is logged on</span><br><span class="line">whoami (1)           - <span class="built_in">print</span> effective userid</span><br><span class="line">whois (1)            - client <span class="keyword">for</span> the whois directory service</span><br><span class="line">whois.conf (5)       - alternative WHOIS servers list <span class="keyword">for</span> whois client</span><br></pre></td></tr></table></figure>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/12/06/whatis_which_whence_where_whereis_type_apropos/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1252,6 +1097,25 @@ GetStringUTFRegion
           </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
 
           
             
@@ -1274,20 +1138,15 @@ GetStringUTFRegion
 
       
         
-          
-            <h2 id="Install_nvm_(Node_Version_Manager)">Install <a href="https://github.com/creationix/nvm" target="_blank" rel="external">nvm (Node Version Manager)</a></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.<span class="number">29.0</span>/install.sh | bash</span><br></pre></td></tr></table></figure>
+          <h2 id="Install_nvm_(Node_Version_Manager)">Install <a href="https://github.com/creationix/nvm">nvm (Node Version Manager)</a></h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash</span><br></pre></td></tr></table></figure>
 <p>If that fail, try manual install:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/creationix/nvm.git ~/.nvm &amp;&amp; <span class="built_in">cd</span> ~/.nvm &amp;&amp; git checkout `git describe --abbrev=<span class="number">0</span> --tags`</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/creationix/nvm.git ~/.nvm &amp;&amp; <span class="built_in">cd</span> ~/.nvm &amp;&amp; git checkout `git describe --abbrev=0 --tags`</span><br></pre></td></tr></table></figure>
 <p>Then add these lines to <code>~/.bashrc</code>, <code>~/profile</code>, or <code>~/.zshrc</code>:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> NVM_DIR=<span class="string">"<span class="variable">$HOME</span>/.nvm"</span></span><br><span class="line">[ <span class="operator">-s</span> <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> ] &amp;&amp; . <span class="string">"<span class="variable">$NVM_DIR</span>/nvm.sh"</span> <span class="comment"># This loads nvm</span></span><br></pre></td></tr></table></figure>
-<p>At last, reopen your terminal or logout and login again.</p>
-<h2 id="Install_Node_and_npm">Install Node and npm</h2><p>nvm bundles node with npm (node package manager), so you only need to install node.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">nvm install node  <span class="comment"># this install the latest version of node</span></span><br><span class="line"></span><br><span class="line">nvm use node <span class="comment"># use the latest vesion of node</span></span><br><span class="line"></span><br><span class="line">nvm <span class="built_in">alias</span> default node  <span class="comment"># set a default node version to be used on any new shell</span></span><br><span class="line"></span><br><span class="line">nvm ls  <span class="comment"># list installed node vesions</span></span><br><span class="line"></span><br><span class="line">nvm ls-remote <span class="comment"># list what vesions are available to install</span></span><br></pre></td></tr></table></figure>
-<h2 id="Install_hexo_and_init_a_blog">Install <a href="https://hexo.io/" target="_blank" rel="external">hexo</a> and init a blog</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo init blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br><span class="line">npm install</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<hr>
-<p>done.</p>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/27/install-hexo-on-ubuntu/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1335,7 +1194,7 @@ GetStringUTFRegion
             
               
                 
-                <a class="post-title-link" href="/2015/11/23/hello-world/" itemprop="url">
+                <a class="post-title-link" href="/2015/11/22/hello-world/" itemprop="url">
                   Hello World
                 </a>
               
@@ -1349,11 +1208,30 @@ GetStringUTFRegion
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2015-11-23T09:39:36+08:00" content="2015-11-23">
-              2015-11-23
+            <time itemprop="dateCreated" datetime="2015-11-22T16:00:00+08:00" content="2015-11-22">
+              2015-11-22
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Misc/" itemprop="url" rel="index">
+                    <span itemprop="name">Misc</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
@@ -1377,18 +1255,14 @@ GetStringUTFRegion
 
       
         
-          
-            <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+          <p>Welcome to <a href="http://hexo.io/">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
 <h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-          
+<p>More info: <a href="http://hexo.io/docs/writing.html">Writing</a></p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/22/hello-world/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -1463,10 +1337,10 @@ GetStringUTFRegion
 
           
             <div class="site-state-item site-state-categories">
-              
-                <span class="site-state-item-count">2</span>
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">categories</span>
-              
+              </a>
             </div>
           
 
