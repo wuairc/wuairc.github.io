@@ -85,16 +85,22 @@
 
 
 
-<meta name="description" content="Android developer">
+<meta name="description" content="目标：在 Ubuntu 16.04.2 中编译 Android 7.1.2 的源代码, 并在模拟器上运行。
+这不是一个 step by step 的教学，只记录过程。本文假设读者熟悉命令行，只是需要知道具体的步骤和命令。
+官方文档：https://source.android.com/source/requirements，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Compile Android 7.1.2 Source Code">
 <meta property="og:url" content="http://yang.run/2017/05/13/Compile-Android-7-1-2-Source-Code/index.html">
 <meta property="og:site_name" content="Tim Yang's blog">
-<meta property="og:description" content="Android developer">
-<meta property="og:updated_time" content="2017-05-13T13:52:25.513Z">
+<meta property="og:description" content="目标：在 Ubuntu 16.04.2 中编译 Android 7.1.2 的源代码, 并在模拟器上运行。
+这不是一个 step by step 的教学，只记录过程。本文假设读者熟悉命令行，只是需要知道具体的步骤和命令。
+官方文档：https://source.android.com/source/requirements，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。">
+<meta property="og:updated_time" content="2017-05-14T10:41:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Compile Android 7.1.2 Source Code">
-<meta name="twitter:description" content="Android developer">
+<meta name="twitter:description" content="目标：在 Ubuntu 16.04.2 中编译 Android 7.1.2 的源代码, 并在模拟器上运行。
+这不是一个 step by step 的教学，只记录过程。本文假设读者熟悉命令行，只是需要知道具体的步骤和命令。
+官方文档：https://source.android.com/source/requirements，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。">
 
 
 
@@ -351,7 +357,89 @@
       
 
       
-        
+        <p>目标：在 Ubuntu 16.04.2 中编译 Android 7.1.2 的源代码, 并在模拟器上运行。</p>
+<p>这不是一个 step by step 的教学，只记录过程。本文假设读者熟悉命令行，只是需要知道具体的步骤和命令。</p>
+<p>官方文档：<a href="https://source.android.com/source/requirements" target="_blank" rel="external">https://source.android.com/source/requirements</a>，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。</p>
+<a id="more"></a>
+<hr>
+<!-- TOC -->
+<ul>
+<li><a href="#1-要求">1. 要求</a></li>
+<li><a href="#2-建立编译环境">2. 建立编译环境</a><ul>
+<li><a href="#21-设置代理">2.1. 设置代理</a></li>
+<li><a href="#22-安装-jdk">2.2. 安装 JDK</a></li>
+<li><a href="#23-设置-usb-访问规则">2.3. 设置 USB 访问规则</a></li>
+<li><a href="#24-设置编译缓存-ccache">2.4. 设置编译缓存 ccache</a></li>
+</ul>
+</li>
+<li><a href="#3-下载源代码">3. 下载源代码</a><ul>
+<li><a href="#31-安装-repo-工具">3.1. 安装 repo 工具</a></li>
+<li><a href="#32-初始化-repo-客户端">3.2. 初始化 repo 客户端</a></li>
+</ul>
+</li>
+<li><a href="#4-开始编译">4. 开始编译</a><ul>
+<li><a href="#41-清除前一次的编译结果">4.1. 清除前一次的编译结果</a></li>
+<li><a href="#42-设置编译环境">4.2. 设置编译环境</a></li>
+<li><a href="#43-选择-target">4.3. 选择 target</a></li>
+<li><a href="#44-编译">4.4. 编译</a></li>
+<li><a href="#45-运行模拟器">4.5. 运行模拟器</a></li>
+</ul>
+</li>
+<li><a href="#5-注意事项">5. 注意事项</a><ul>
+<li><a href="#51-保存当前环境变量">5.1. 保存当前环境变量</a></li>
+<li><a href="#52-下次如何使用">5.2. 下次如何使用</a></li>
+</ul>
+</li>
+<li><a href="#6-遇到的问题">6. 遇到的问题</a></li>
+</ul>
+<!-- /TOC -->
+<h1 id="1-_要求">1. 要求</h1><ol>
+<li>64 位操作系统</li>
+<li>150 GB 可用硬盘空间</li>
+<li><code>Ubuntu 16.04</code> (编译不同 Android 版本需要的 Ubuntu 版本不同，文档上说编译 Android 6.0 需要使用 Ubuntu 14.04)，本文以 Ubuntu 为例，也支持 Mac OS X, 但不支持 Windows。</li>
+<li><code>OpenJDK 8</code> (编译不同 Android 版本需要的 JDK也不同)</li>
+<li>其他重要的依赖：<code>python2</code>, <code>git</code>, <code>GNU make</code></li>
+</ol>
+<p><a href="https://source.android.com/source/requirements" target="_blank" rel="external">本节来源</a></p>
+<h1 id="2-_建立编译环境">2. 建立编译环境</h1><h2 id="2-1-_设置代理">2.1. 设置代理</h2><p>在中国，由于众所周知的原因，访问 Android 官方的源代码仓库需要使用代理。将以下代码保存为 <code>proxy_on.sh</code>:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span><br><span class="line"></span></span><br><span class="line">url=127.0.0.1:1080  <span class="comment"># 修改为你自己的代码服务器地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># different software read different variable name</span></span><br><span class="line"><span class="built_in">export</span> http_proxy=http://<span class="variable">$&#123;url&#125;</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=https://<span class="variable">$&#123;url&#125;</span></span><br><span class="line"><span class="built_in">export</span> HTTP_PROXY=http://<span class="variable">$&#123;url&#125;</span></span><br><span class="line"><span class="built_in">export</span> HTTPS_PROXY=https://<span class="variable">$&#123;url&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>每次打开终端时运行一次（代理服务器地址需要相应修改）:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x proxy_on.sh</span><br><span class="line">./proxy_on.sh</span><br></pre></td></tr></table></figure>
+<p>要点是：这4个环境变量都要设置，才能满足所有应用的需要，如果按 Google 的文档设置，你会发现 git 没有使用代理。</p>
+<h2 id="2-2-_安装_JDK">2.2. 安装 JDK</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install openjdk-8-jdk</span><br><span class="line"><span class="comment"># 验证</span></span><br><span class="line">java -version</span><br></pre></td></tr></table></figure>
+<h2 id="2-3-_设置_USB_访问规则">2.3. 设置 USB 访问规则</h2><p>Linux 中，普通用户没有权限访问 USB 设备，需要进行配置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -S -O - http://source.android.com/<span class="built_in">source</span>/51-android.txt | sed <span class="string">"s/&lt;username&gt;/<span class="variable">$USER</span>/"</span> | sudo tee &gt;/dev/null /etc/udev/rules.d/51-android.rules; sudo udevadm control --reload-rules</span><br></pre></td></tr></table></figure>
+<h2 id="2-4-_设置编译缓存_ccache">2.4. 设置编译缓存 ccache</h2><p>如果需要多次编译，建议设置编译缓存，这里略过，请参考<a href="https://source.android.com/source/initializing#setting-up-ccache" target="_blank" rel="external">官方文档</a>。</p>
+<p><a href="https://source.android.com/source/initializing" target="_blank" rel="external">本节来源</a></p>
+<h1 id="3-_下载源代码">3. 下载源代码</h1><h2 id="3-1-_安装_repo_工具">3.1. 安装 repo 工具</h2><p><code>repo</code> 是管理 Android 源代码仓库的工具。Android 的源代码分散在多个 git 仓库里，使用 <code>repo</code> 工具方便统一管理。</p>
+<p>安装 <code>repo</code>:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/bin</span><br><span class="line">PATH=~/bin:<span class="variable">$PATH</span>    <span class="comment"># 最好将这一句加到 ~/.profile 里，方便后续使用</span></span><br><span class="line">curl https://storage.googleapis.com/git-repo-downloads/repo &gt; ~/bin/repo</span><br><span class="line">chmod a+x ~/bin/repo</span><br></pre></td></tr></table></figure>
+<h2 id="3-2-_初始化_repo_客户端">3.2. 初始化 repo 客户端</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir android_<span class="built_in">source</span></span><br><span class="line"><span class="built_in">cd</span> android_<span class="built_in">source</span></span><br><span class="line">repo init -u https://android.googlesource.com/platform/manifest -b android-7.1.2_r11</span><br><span class="line"></span><br><span class="line">repo sync <span class="comment"># 会下载 80 GB 的数据，耐心等待</span></span><br></pre></td></tr></table></figure>
+<p><code>android-7.1.2_r11</code> 是我要编译的 Android 代码的版本号（一个tag），可以从这里选择其他版本 <a href="https://source.android.com/source/build-numbers#source-code-tags-and-builds" target="_blank" rel="external">Source Code Tags and Builds</a>.</p>
+<p><strong>接下来就是耐心的等待</strong>。Android 7.1.2 的代码有大约 80 GB，够下载一阵子的了。如果你的代理服务器不够快，<code>https://android.googlesource.com/platform/manifest</code> 这个地址国内有镜像地址，我没用过，就不写了。</p>
+<p><a href="https://source.android.com/source/downloading" target="_blank" rel="external">本节来源</a></p>
+<h1 id="4-_开始编译">4. 开始编译</h1><p>我们要编译一个在模拟器上运行的ROM，因此就不需要下载 proprietary binaries 了。如果是想刷到 Nexus 或 Pixel 设备上，还要下载对应的 proprietary binaries，<a href="https://source.android.com/source/building#obtaining-proprietary-binaries" target="_blank" rel="external">详见文档</a>。</p>
+<h2 id="4-1-_清除前一次的编译结果">4.1. 清除前一次的编译结果</h2><p>如果进行多次编译，并修改了编译配置，最好运行这个命令将之前的结果删除。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make clobber</span><br></pre></td></tr></table></figure>
+<h2 id="4-2-_设置编译环境">4.2. 设置编译环境</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">. build/envsetup.sh</span><br></pre></td></tr></table></figure>
+<h2 id="4-3-_选择_target">4.3. 选择 target</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lunch</span><br></pre></td></tr></table></figure>
+<p>选择 <code>aosp_x86-eng</code>，即输入 <code>5</code>。 也可以将 <code>aosp_x86-eng</code> 作为参数传给 <code>lunch</code>。<code>eng</code> 代表 <code>development configuration with additional debugging tools</code>，即工程模式。</p>
+<h2 id="4-4-_编译">4.4. 编译</h2><p>下面的命令会编译所有东西（所以很慢），<code>-j10</code> 表示并行任务数，这个数字一般指定为电脑的核数的1 - 2 倍之间。我的电脑是 4 核 8 线程，SSD 硬盘，瓶颈在 CPU 上，高了反而不好，所以选了 10。</p>
+<p>视电脑性能，这个命令需要一到多个小时。</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">make</span> -j10</span><br></pre></td></tr></table></figure>
+<p>最后出现类似下面的绿色文字，说明编译成功。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#### make completed successfully (01:05:36 (hh:mm:ss)) ####</span><br></pre></td></tr></table></figure>
+<h2 id="4-5-_运行模拟器">4.5. 运行模拟器</h2><p>编译过程已经将模拟器加到运行路径里了，直接运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看一下 emulator 所在路径</span></span><br><span class="line"><span class="built_in">which</span> emulator</span><br><span class="line"><span class="comment"># 输出 /home/ty/git/android_source/prebuilts/android-emulator/linux-x86_64/emulator</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">which</span> android</span><br><span class="line"><span class="comment"># 输出 /home/ty/git/android_source/prebuilts/devtools/tools/android</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行 emulator，非常慢，耐心等待</span></span><br><span class="line">emulator -memory 2048 -verbose -skin WVGA854</span><br></pre></td></tr></table></figure>
+<p><a href="https://source.android.com/source/building" target="_blank" rel="external">本节来源</a></p>
+<h1 id="5-_注意事项">5. 注意事项</h1><h2 id="5-1-_保存当前环境变量">5.1. 保存当前环境变量</h2><p>编译完成后，不要关闭终端，执行以下命令将当前的环境变量保存起来，以备下次查看<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">env &gt; ~/android_env_after_build_<span class="keyword">for</span>_aosp_x86-eng.txt</span><br></pre></td></tr></table></figure></p>
+<h2 id="5-2-_下次如何使用">5.2. 下次如何使用</h2><p>编译成功后，关掉终端，下次再打开。需要执行以下命令，恢复运行环境<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/git/android_<span class="built_in">source</span>     <span class="comment"># 进入源代码所在根目录</span></span><br><span class="line">. ~/Dropbox/code/script/proxy_on.sh   <span class="comment"># 可选，设置好代理，proxy_on.sh 是自己写的脚本</span></span><br><span class="line">. build/envsetup.sh</span><br><span class="line">lunch       <span class="comment"># 选择上次编译时选择的选项，如不记得，请查看上一步保存的 .txt 文件</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="6-_遇到的问题">6. 遇到的问题</h1><ol>
+<li><p>最后一步运行模拟器，经常黑屏假死（也许是等待的时候不够长）。尝试了几次不同的 target，最后运行成功的有 <code>aosp_arm64-eng</code> 和 <code>aosp_x86-eng</code>。运行模拟器时要有耐心，可能会假死几分钟。arm 模拟器性能很差，从 Android Studio 安装 App 失败，x86 的很流畅。</p>
+</li>
+<li><p>代理问题。如果使用的是 http(s) 代理，要按前面的说明，4 个环境变量都设置。按照 Google 官方的文档设置的结果是 git 没有走代理，使用 <code>git config --global</code> 又不太方便。</p>
+</li>
+</ol>
+
       
     </div>
 
@@ -442,8 +530,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/my_avatar.png"
@@ -505,6 +602,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-_要求"><span class="nav-text">1. 要求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-_建立编译环境"><span class="nav-text">2. 建立编译环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-_设置代理"><span class="nav-text">2.1. 设置代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-_安装_JDK"><span class="nav-text">2.2. 安装 JDK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-_设置_USB_访问规则"><span class="nav-text">2.3. 设置 USB 访问规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-_设置编译缓存_ccache"><span class="nav-text">2.4. 设置编译缓存 ccache</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-_下载源代码"><span class="nav-text">3. 下载源代码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-_安装_repo_工具"><span class="nav-text">3.1. 安装 repo 工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-_初始化_repo_客户端"><span class="nav-text">3.2. 初始化 repo 客户端</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-_开始编译"><span class="nav-text">4. 开始编译</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-_清除前一次的编译结果"><span class="nav-text">4.1. 清除前一次的编译结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-_设置编译环境"><span class="nav-text">4.2. 设置编译环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-_选择_target"><span class="nav-text">4.3. 选择 target</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-_编译"><span class="nav-text">4.4. 编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-5-_运行模拟器"><span class="nav-text">4.5. 运行模拟器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-_注意事项"><span class="nav-text">5. 注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-_保存当前环境变量"><span class="nav-text">5.1. 保存当前环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-_下次如何使用"><span class="nav-text">5.2. 下次如何使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-_遇到的问题"><span class="nav-text">6. 遇到的问题</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
