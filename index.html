@@ -356,17 +356,9 @@
 
       
         
-          <!-- TOC -->
-<ul>
-<li><a href="#1-起因">1. 起因</a></li>
-<li><a href="#2-编译">2. 编译</a></li>
-<li><a href="#3-刷机">3. 刷机</a></li>
-<li><a href="#4-结果">4. 结果</a></li>
-</ul>
-<!-- /TOC -->
-<h1 id="1-_起因">1. 起因</h1><p>我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，<a href="https://www.reddit.com/r/LineageOS/comments/5v2vk7/is_there_any_way_to_enable_call_recording_by/ddzgam9/">Lineage Team Member - UX maintainer - ddzgam9 说</a> LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。于是萌生了修改这个白名单的想法。</p>
+          <h1 id="1-_起因">1. 起因</h1><p>我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，<a href="https://www.reddit.com/r/LineageOS/comments/5v2vk7/is_there_any_way_to_enable_call_recording_by/ddzgam9/">Lineage Team Member - UX maintainer - ddzgam9 说</a> LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。于是萌生了修改这个白名单的想法。</p>
 <p>三星 S7 是日常使用的手机，不能每天折腾刷机，所以先在闲置的 Nexus 5 上测试一下，于是有了本文。</p>
-<h1 id="2-_编译">2. 编译</h1><p><a href="https://wiki.lineageos.org/devices/hammerhead/build">LineageOS 的文档</a> 写的很好，照着一步一步来就行了。比编译 AOSP 源码简单很多。文档写的很详细，就不赘述了。在中国需要注意的特殊情况，设置代理的注意事项，参考我前一篇<a href="/2017/05/13/Compile-Android-7-1-2-Source-Code/">编译AOSP源码的文章</a>。</p>
+<h1 id="2-_编译">2. 编译</h1><p><a href="https://wiki.lineageos.org/devices/hammerhead/build">LineageOS 的文档</a> 写的很好，照着一步一步来就行了，比编译 AOSP 源码简单很多。文档写的很明白，不赘述。在中国需要下拉代码设置代理，方法参考前一篇<a href="/2017/05/13/Compile-Android-7-1-2-Source-Code/">编译AOSP源码的文章</a>。</p>
 <h1 id="3-_刷机">3. 刷机</h1><p>编译完成后，<code>cd $OUT</code>，目录下有一个 <code>lineage-14.1-20171021-UNOFFICIAL-hammerhead.zip</code> ，这个文件就是刷机包，通过 <a href="https://twrp.me/lg/lgnexus5.html">TWRP</a> 就可以刷机了。</p>
           <!--noindex-->
           <div class="post-button text-center">

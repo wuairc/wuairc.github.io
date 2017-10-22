@@ -85,36 +85,21 @@
 
 
 
-<meta name="description" content="1. 起因
-2. 编译
-3. 刷机
-4. 结果
-
-
-1. 起因我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，Lineage Team Member - UX maintainer - ddzgam9 说 LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。">
+<meta name="description" content="1. 起因我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，Lineage Team Member - UX maintainer - ddzgam9 说 LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。于是萌生了修改这个白名单的想法。
+三星 S7 是日常使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Compile LineageOS 14.1 for Nexus 5">
 <meta property="og:url" content="http://yang.run/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/index.html">
 <meta property="og:site_name" content="Tim Yang's blog">
-<meta property="og:description" content="1. 起因
-2. 编译
-3. 刷机
-4. 结果
-
-
-1. 起因我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，Lineage Team Member - UX maintainer - ddzgam9 说 LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。">
+<meta property="og:description" content="1. 起因我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，Lineage Team Member - UX maintainer - ddzgam9 说 LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。于是萌生了修改这个白名单的想法。
+三星 S7 是日常使用">
 <meta property="og:image" content="http://yang.run/images/2017/build_lineageos_for_nexus5_succeed.png">
 <meta property="og:image" content="http://yang.run/images/2017/lineageos_on_nexus5_system_info.png">
-<meta property="og:updated_time" content="2017-10-22T07:52:14.164Z">
+<meta property="og:updated_time" content="2017-10-22T08:03:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Compile LineageOS 14.1 for Nexus 5">
-<meta name="twitter:description" content="1. 起因
-2. 编译
-3. 刷机
-4. 结果
-
-
-1. 起因我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，Lineage Team Member - UX maintainer - ddzgam9 说 LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。">
+<meta name="twitter:description" content="1. 起因我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，Lineage Team Member - UX maintainer - ddzgam9 说 LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。于是萌生了修改这个白名单的想法。
+三星 S7 是日常使用">
 <meta name="twitter:image" content="http://yang.run/images/2017/build_lineageos_for_nexus5_succeed.png">
 
 
@@ -372,17 +357,9 @@
       
 
       
-        <!-- TOC -->
-<ul>
-<li><a href="#1-起因">1. 起因</a></li>
-<li><a href="#2-编译">2. 编译</a></li>
-<li><a href="#3-刷机">3. 刷机</a></li>
-<li><a href="#4-结果">4. 结果</a></li>
-</ul>
-<!-- /TOC -->
-<h1 id="1-_起因">1. 起因</h1><p>我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，<a href="https://www.reddit.com/r/LineageOS/comments/5v2vk7/is_there_any_way_to_enable_call_recording_by/ddzgam9/" target="_blank" rel="external">Lineage Team Member - UX maintainer - ddzgam9 说</a> LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。于是萌生了修改这个白名单的想法。</p>
+        <h1 id="1-_起因">1. 起因</h1><p>我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，<a href="https://www.reddit.com/r/LineageOS/comments/5v2vk7/is_there_any_way_to_enable_call_recording_by/ddzgam9/" target="_blank" rel="external">Lineage Team Member - UX maintainer - ddzgam9 说</a> LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。于是萌生了修改这个白名单的想法。</p>
 <p>三星 S7 是日常使用的手机，不能每天折腾刷机，所以先在闲置的 Nexus 5 上测试一下，于是有了本文。</p>
-<h1 id="2-_编译">2. 编译</h1><p><a href="https://wiki.lineageos.org/devices/hammerhead/build" target="_blank" rel="external">LineageOS 的文档</a> 写的很好，照着一步一步来就行了。比编译 AOSP 源码简单很多。文档写的很详细，就不赘述了。在中国需要注意的特殊情况，设置代理的注意事项，参考我前一篇<a href="/2017/05/13/Compile-Android-7-1-2-Source-Code/">编译AOSP源码的文章</a>。</p>
+<h1 id="2-_编译">2. 编译</h1><p><a href="https://wiki.lineageos.org/devices/hammerhead/build" target="_blank" rel="external">LineageOS 的文档</a> 写的很好，照着一步一步来就行了，比编译 AOSP 源码简单很多。文档写的很明白，不赘述。在中国需要下拉代码设置代理，方法参考前一篇<a href="/2017/05/13/Compile-Android-7-1-2-Source-Code/">编译AOSP源码的文章</a>。</p>
 <h1 id="3-_刷机">3. 刷机</h1><p>编译完成后，<code>cd $OUT</code>，目录下有一个 <code>lineage-14.1-20171021-UNOFFICIAL-hammerhead.zip</code> ，这个文件就是刷机包，通过 <a href="https://twrp.me/lg/lgnexus5.html" target="_blank" rel="external">TWRP</a> 就可以刷机了。</p>
 <a id="more"></a>
 <h1 id="4-_结果">4. 结果</h1><ol>
