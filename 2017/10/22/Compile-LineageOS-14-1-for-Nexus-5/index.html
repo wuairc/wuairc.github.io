@@ -1,0 +1,752 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next muse" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,ROM,LineageOS,Nexus 5," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="1. 起因
+2. 编译
+3. 刷机
+4. 结果
+
+
+1. 起因我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，Lineage Team Member - UX maintainer - ddzgam9 说 LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Compile LineageOS 14.1 for Nexus 5">
+<meta property="og:url" content="http://yang.run/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/index.html">
+<meta property="og:site_name" content="Tim Yang's blog">
+<meta property="og:description" content="1. 起因
+2. 编译
+3. 刷机
+4. 结果
+
+
+1. 起因我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，Lineage Team Member - UX maintainer - ddzgam9 说 LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。">
+<meta property="og:image" content="http://yang.run/images/2017/build_lineageos_for_nexus5_succeed.png">
+<meta property="og:image" content="http://yang.run/images/2017/lineageos_on_nexus5_system_info.png">
+<meta property="og:updated_time" content="2017-10-22T07:52:14.164Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Compile LineageOS 14.1 for Nexus 5">
+<meta name="twitter:description" content="1. 起因
+2. 编译
+3. 刷机
+4. 结果
+
+
+1. 起因我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，Lineage Team Member - UX maintainer - ddzgam9 说 LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。">
+<meta name="twitter:image" content="http://yang.run/images/2017/build_lineageos_for_nexus5_succeed.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yang.run/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/"/>
+
+
+
+
+
+  <title> Compile LineageOS 14.1 for Nexus 5 | Tim Yang's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tim Yang's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yang.run/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tim Yang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tim Yang's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Compile LineageOS 14.1 for Nexus 5
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-10-22T14:54:01+08:00">
+                2017-10-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <!-- TOC -->
+<ul>
+<li><a href="#1-起因">1. 起因</a></li>
+<li><a href="#2-编译">2. 编译</a></li>
+<li><a href="#3-刷机">3. 刷机</a></li>
+<li><a href="#4-结果">4. 结果</a></li>
+</ul>
+<!-- /TOC -->
+<h1 id="1-_起因">1. 起因</h1><p>我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，<a href="https://www.reddit.com/r/LineageOS/comments/5v2vk7/is_there_any_way_to_enable_call_recording_by/ddzgam9/" target="_blank" rel="external">Lineage Team Member - UX maintainer - ddzgam9 说</a> LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。于是萌生了修改这个白名单的想法。</p>
+<p>三星 S7 是日常使用的手机，不能每天折腾刷机，所以先在闲置的 Nexus 5 上测试一下，于是有了本文。</p>
+<h1 id="2-_编译">2. 编译</h1><p><a href="https://wiki.lineageos.org/devices/hammerhead/build" target="_blank" rel="external">LineageOS 的文档</a> 写的很好，照着一步一步来就行了。比编译 AOSP 源码简单很多。文档写的很详细，就不赘述了。在中国需要注意的特殊情况，设置代理的注意事项，参考我前一篇<a href="/2017/05/13/Compile-Android-7-1-2-Source-Code/">编译AOSP源码的文章</a>。</p>
+<h1 id="3-_刷机">3. 刷机</h1><p>编译完成后，<code>cd $OUT</code>，目录下有一个 <code>lineage-14.1-20171021-UNOFFICIAL-hammerhead.zip</code> ，这个文件就是刷机包，通过 <a href="https://twrp.me/lg/lgnexus5.html" target="_blank" rel="external">TWRP</a> 就可以刷机了。</p>
+<a id="more"></a>
+<h1 id="4-_结果">4. 结果</h1><ol>
+<li><p>编译成功<br> <img src="/images/2017/build_lineageos_for_nexus5_succeed.png" alt="编译成功" title="编译成功"></p>
+</li>
+<li><p>系统信息<br> <img src="/images/2017/lineageos_on_nexus5_system_info.png" alt="系统信息" title="系统信息"></p>
+</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+            <a href="/tags/ROM/" rel="tag"># ROM</a>
+          
+            <a href="/tags/LineageOS/" rel="tag"># LineageOS</a>
+          
+            <a href="/tags/Nexus-5/" rel="tag"># Nexus 5</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/13/Compile-Android-7-1-2-Source-Code/" rel="next" title="Compile AOSP Android 7.1.2 Source Code">
+                <i class="fa fa-chevron-left"></i> Compile AOSP Android 7.1.2 Source Code
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/my_avatar.png"
+               alt="Tim Yang" />
+          <p class="site-author-name" itemprop="name">Tim Yang</p>
+           
+              <p class="site-description motion-element" itemprop="description">Android developer</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-_起因"><span class="nav-text">1. 起因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-_编译"><span class="nav-text">2. 编译</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-_刷机"><span class="nav-text">3. 刷机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-_结果"><span class="nav-text">4. 结果</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tim Yang</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

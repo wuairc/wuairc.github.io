@@ -258,6 +258,164 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yang.run/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tim Yang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tim Yang's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/" itemprop="url">
+                  Compile LineageOS 14.1 for Nexus 5
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-10-22T14:54:01+08:00">
+                2017-10-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <!-- TOC -->
+<ul>
+<li><a href="#1-起因">1. 起因</a></li>
+<li><a href="#2-编译">2. 编译</a></li>
+<li><a href="#3-刷机">3. 刷机</a></li>
+<li><a href="#4-结果">4. 结果</a></li>
+</ul>
+<!-- /TOC -->
+<h1 id="1-_起因">1. 起因</h1><p>我的三星 S7 时不时整个系统卡顿几秒钟，无法进行任务操作，加上三星对系统是负优化，就刷了 LineageOS 14.1。想要通话录音功能，查了一下，<a href="https://www.reddit.com/r/LineageOS/comments/5v2vk7/is_there_any_way_to_enable_call_recording_by/ddzgam9/">Lineage Team Member - UX maintainer - ddzgam9 说</a> LineageOS 有通话录音功能，但有一个白名单，在这个名单里的地区才能使用这个功能。于是萌生了修改这个白名单的想法。</p>
+<p>三星 S7 是日常使用的手机，不能每天折腾刷机，所以先在闲置的 Nexus 5 上测试一下，于是有了本文。</p>
+<h1 id="2-_编译">2. 编译</h1><p><a href="https://wiki.lineageos.org/devices/hammerhead/build">LineageOS 的文档</a> 写的很好，照着一步一步来就行了。比编译 AOSP 源码简单很多。文档写的很详细，就不赘述了。在中国需要注意的特殊情况，设置代理的注意事项，参考我前一篇<a href="/2017/05/13/Compile-Android-7-1-2-Source-Code/">编译AOSP源码的文章</a>。</p>
+<h1 id="3-_刷机">3. 刷机</h1><p>编译完成后，<code>cd $OUT</code>，目录下有一个 <code>lineage-14.1-20171021-UNOFFICIAL-hammerhead.zip</code> ，这个文件就是刷机包，通过 <a href="https://twrp.me/lg/lgnexus5.html">TWRP</a> 就可以刷机了。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yang.run/2017/05/13/Compile-Android-7-1-2-Source-Code/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -281,7 +439,7 @@
               
                 
                 <a class="post-title-link" href="/2017/05/13/Compile-Android-7-1-2-Source-Code/" itemprop="url">
-                  Compile Android 7.1.2 Source Code
+                  Compile AOSP Android 7.1.2 Source Code
                 </a>
               
             
@@ -359,6 +517,10 @@
           <p>目标：在 Ubuntu 16.04.2 中编译 Android 7.1.2 的源代码, 并在模拟器上运行。</p>
 <p>这不是一个 step by step 的教学，只记录过程。本文假设读者熟悉命令行，只是需要知道具体的步骤和命令。</p>
 <p>官方文档：<a href="https://source.android.com/source/requirements">https://source.android.com/source/requirements</a>，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。</p>
+<ul>
+<li><strong>2017-10-22 更新</strong></li>
+</ul>
+<p><a href="/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/">LineageOS 编译起来简单多了</a>，新手可以拿这个试手。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/05/13/Compile-Android-7-1-2-Source-Code/#more" rel="contents">
@@ -1636,158 +1798,13 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yang.run/2015/11/22/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Tim Yang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/my_avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tim Yang's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/11/22/hello-world/" itemprop="url">
-                  Hello World
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-11-22T16:00:00+08:00">
-                2015-11-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Misc/" itemprop="url" rel="index">
-                    <span itemprop="name">Misc</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Welcome to <a href="http://hexo.io/">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html">Writing</a></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2015/11/22/hello-world/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -1830,7 +1847,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -1852,7 +1869,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>

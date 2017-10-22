@@ -69,7 +69,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android,Thread," />
+  <meta name="keywords" content="Android,Thread,Java," />
 
 
 
@@ -99,7 +99,7 @@
 
 临时任务在服务里运行，实测发现所有任务线程退出后，进程也不退出。进程中还有main, binder0, binder1等线程在运行
 放到临时进程的的代码里会起新的线程，有的是第三方SDK里new出来的，无法修改。怎样监控这些线程">
-<meta property="og:updated_time" content="2016-04-09T06:35:55.000Z">
+<meta property="og:updated_time" content="2017-10-22T07:05:15.242Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用ThreadGroup监控线程退出">
 <meta name="twitter:description" content="问题做性能优化时，有这样一个需求：将运行时间短、申请内存多、结果不留在内存中的操作放到临时进程，运行完后杀掉这个进程，达到迅速降低内存占用的目的。
@@ -432,6 +432,8 @@
           
             <a href="/tags/Thread/" rel="tag"># Thread</a>
           
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
         </div>
       
 
@@ -453,8 +455,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/05/13/Compile-Android-7-1-2-Source-Code/" rel="prev" title="Compile Android 7.1.2 Source Code">
-                Compile Android 7.1.2 Source Code <i class="fa fa-chevron-right"></i>
+              <a href="/2017/05/13/Compile-Android-7-1-2-Source-Code/" rel="prev" title="Compile AOSP Android 7.1.2 Source Code">
+                Compile AOSP Android 7.1.2 Source Code <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -527,7 +529,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -549,7 +551,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>

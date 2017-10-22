@@ -69,7 +69,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android Developer, Java, Blog" />
+  <meta name="keywords" content="Android,ROM,repo,AOSP," />
 
 
 
@@ -87,20 +87,26 @@
 
 <meta name="description" content="目标：在 Ubuntu 16.04.2 中编译 Android 7.1.2 的源代码, 并在模拟器上运行。
 这不是一个 step by step 的教学，只记录过程。本文假设读者熟悉命令行，只是需要知道具体的步骤和命令。
-官方文档：https://source.android.com/source/requirements，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。">
+官方文档：https://source.android.com/source/requirements，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。
+
+2017">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Compile Android 7.1.2 Source Code">
+<meta property="og:title" content="Compile AOSP Android 7.1.2 Source Code">
 <meta property="og:url" content="http://yang.run/2017/05/13/Compile-Android-7-1-2-Source-Code/index.html">
 <meta property="og:site_name" content="Tim Yang's blog">
 <meta property="og:description" content="目标：在 Ubuntu 16.04.2 中编译 Android 7.1.2 的源代码, 并在模拟器上运行。
 这不是一个 step by step 的教学，只记录过程。本文假设读者熟悉命令行，只是需要知道具体的步骤和命令。
-官方文档：https://source.android.com/source/requirements，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。">
-<meta property="og:updated_time" content="2017-05-14T10:41:37.000Z">
+官方文档：https://source.android.com/source/requirements，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。
+
+2017">
+<meta property="og:updated_time" content="2017-10-22T07:09:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Compile Android 7.1.2 Source Code">
+<meta name="twitter:title" content="Compile AOSP Android 7.1.2 Source Code">
 <meta name="twitter:description" content="目标：在 Ubuntu 16.04.2 中编译 Android 7.1.2 的源代码, 并在模拟器上运行。
 这不是一个 step by step 的教学，只记录过程。本文假设读者熟悉命令行，只是需要知道具体的步骤和命令。
-官方文档：https://source.android.com/source/requirements，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。">
+官方文档：https://source.android.com/source/requirements，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。
+
+2017">
 
 
 
@@ -134,7 +140,7 @@
 
 
 
-  <title> Compile Android 7.1.2 Source Code | Tim Yang's blog </title>
+  <title> Compile AOSP Android 7.1.2 Source Code | Tim Yang's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -284,7 +290,7 @@
             
             
               
-                Compile Android 7.1.2 Source Code
+                Compile AOSP Android 7.1.2 Source Code
               
             
           </h1>
@@ -360,6 +366,10 @@
         <p>目标：在 Ubuntu 16.04.2 中编译 Android 7.1.2 的源代码, 并在模拟器上运行。</p>
 <p>这不是一个 step by step 的教学，只记录过程。本文假设读者熟悉命令行，只是需要知道具体的步骤和命令。</p>
 <p>官方文档：<a href="https://source.android.com/source/requirements" target="_blank" rel="external">https://source.android.com/source/requirements</a>，希望直接去看官方文档，我这里列出的步骤，只适用于我的特定环境。</p>
+<ul>
+<li><strong>2017-10-22 更新</strong></li>
+</ul>
+<p><a href="/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/">LineageOS 编译起来简单多了</a>，新手可以拿这个试手。</p>
 <a id="more"></a>
 <hr>
 <!-- TOC -->
@@ -466,6 +476,18 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+            <a href="/tags/ROM/" rel="tag"># ROM</a>
+          
+            <a href="/tags/repo/" rel="tag"># repo</a>
+          
+            <a href="/tags/AOSP/" rel="tag"># AOSP</a>
+          
+        </div>
+      
 
       
         
@@ -484,6 +506,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/22/Compile-LineageOS-14-1-for-Nexus-5/" rel="prev" title="Compile LineageOS 14.1 for Nexus 5">
+                Compile LineageOS 14.1 for Nexus 5 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -555,7 +581,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -577,7 +603,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
